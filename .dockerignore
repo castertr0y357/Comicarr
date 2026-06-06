@@ -1,0 +1,13 @@
+.git
+.venv
+.old
+.pytest_cache
+__pycache__
+*.py[co]
+cache/
+comics/
+celerybeat-schedule*
+.env
+.idea
+.vscode
+.DS_Store

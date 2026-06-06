@@ -12,6 +12,8 @@ This file tracks the current features, environment status, and pending/completed
 - **Recent changes**:
   - Moved legacy application folders (`mylar/`, `lib/`, `tests/`, etc.) and databases/configs to `.old/`.
   - Kept only virtual environment (`.venv`), rule standard configs, git files, and `status.md` in the root workspace.
+  - Generated a comprehensive [README.md](file:///e:/Coding%20Projects/Comicarr/README.md) detailing the origins of Comicarr, highlighting credits/respect to Mylar, and outlining the new FastAPI + HTMX architecture, features, and setup guides.
+  - Created a [.dockerignore](file:///e:/Coding%20Projects/Comicarr/.dockerignore) to optimize build context transfer by excluding local cache, virtual envs, and archive folders.
   - Performed a comprehensive settings audit comparing the legacy codebase's settings definitions with the new FastAPI database/cache settings schema, capturing the mapping in a comparison report.
   - Performed a codebase-wide audit and style cleanup, fixing synchronous session querying, metadata sync object iteration errors, and nested lazy imports.
   - Completed a codebase-wide professional standards refactoring:
@@ -20,6 +22,7 @@ This file tracks the current features, environment status, and pending/completed
     - Set up database migrations with Alembic and updated [app/core/db.py](file:///e:/Coding%20Projects/mylar3/app/core/db.py) to run migrations programmatically on startup.
     - Externalized the weekly pull proxy URL configuration to the dynamic `SystemSettings` schema.
     - Standardized API route form parameter validations using structured dependency injection.
+
 
 
 ## Features Tracking
