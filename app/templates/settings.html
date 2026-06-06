@@ -892,7 +892,19 @@
                 </div>
             </div>
 
-            <!-- Search Providers Tab -->
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save Settings</button>
+            </div>
+        </main>
+    </div>
+</form>
+
+<!-- Search Providers Tab (outside main form to prevent field name collisions) -->
+<div class="settings-container" id="providers-settings-wrapper" style="margin-top: 0; padding-top: 0; display: none;">
+    <!-- Spacer matching sidebar width so providers content aligns with other tabs -->
+    <div style="width: 250px; flex-shrink: 0;"></div>
+    <main class="settings-content">
             <div id="providers" class="tab-content" style="display: none;">
                 <h3>Search Providers & Indexers</h3>
                 <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.9rem;">
@@ -977,14 +989,8 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Form Actions -->
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Save Settings</button>
-            </div>
-        </main>
-    </div>
-</form>
+    </main>
+</div>
 
 <!-- Toast Container -->
 <div id="toast" class="toast">
@@ -994,11 +1000,25 @@
 <script>
     // Tab switching logic
     function showTab(tabId, event) {
-        // Hide all tab content panes
+        // Hide all tab content panes (covers both the main form and providers wrapper)
         document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
         // Deactivate all tab buttons
         document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-        
+
+        // The providers tab is in a separate wrapper outside the form
+        const providersWrapper = document.getElementById('providers-settings-wrapper');
+        const settingsForm = document.getElementById('settings-form');
+
+        if (tabId === 'providers') {
+            // Show providers wrapper, hide main form container
+            if (providersWrapper) providersWrapper.style.display = 'flex';
+            if (settingsForm) settingsForm.style.display = 'none';
+        } else {
+            // Show main form container, hide providers wrapper
+            if (providersWrapper) providersWrapper.style.display = 'none';
+            if (settingsForm) settingsForm.style.display = '';
+        }
+
         // Show selected tab content pane
         document.getElementById(tabId).style.display = 'block';
         // Mark current button as active
