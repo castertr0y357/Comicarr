@@ -14,6 +14,7 @@ This file tracks the current features, environment status, and pending/completed
   - Kept only virtual environment (`.venv`), rule standard configs, git files, and `status.md` in the root workspace.
   - Generated a comprehensive [README.md](file:///e:/Coding%20Projects/Comicarr/README.md) detailing the origins of Comicarr, highlighting credits/respect to Mylar, and outlining the new FastAPI + HTMX architecture, features, and setup guides.
   - Created a [.dockerignore](file:///e:/Coding%20Projects/Comicarr/.dockerignore) to optimize build context transfer by excluding local cache, virtual envs, and archive folders.
+  - Migrated `COMICVINE_API_KEY` configuration from environment variables (`.env`, `.env.example`, `docker-compose.yml`) to the dynamic database `SystemSettings` schema, enabling key updates from the UI settings panel without container restarts.
   - Performed a comprehensive settings audit comparing the legacy codebase's settings definitions with the new FastAPI database/cache settings schema, capturing the mapping in a comparison report.
   - Performed a codebase-wide audit and style cleanup, fixing synchronous session querying, metadata sync object iteration errors, and nested lazy imports.
   - Completed a codebase-wide professional standards refactoring:

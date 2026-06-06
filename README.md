@@ -61,7 +61,7 @@ Comicarr is a complete modernization of the CherryPy-based legacy architecture:
    ```bash
    cp .env.example .env
    ```
-   Edit `.env` and fill in your `COMICVINE_API_KEY`. You can also configure other variables like database credentials, ports, and default downloader configurations.
+    Edit `.env` to configure your database credentials, ports, and other environment variables. (Note: Your ComicVine API Key is configured dynamically via the web UI settings dashboard, so you do not need to set it in `.env` or restart containers when updating it).
 
 3. **Start the Application**
    Spin up the container stack using Docker Compose:
