@@ -1,5 +1,5 @@
 """
-Celery application entry-point for mylar3.
+Celery application entry-point for comicarr.
 
 Defines the celery_app instance, configures serialization and result handling,
 and registers the beat schedule for automated periodic tasks.
@@ -14,7 +14,7 @@ from kombu import Queue
 from app.core.config import settings
 
 celery_app = Celery(
-    "mylar3_tasks",
+    "comicarr_tasks",
     broker=settings.REDIS_URL,
     backend=settings.REDIS_URL,
     include=[

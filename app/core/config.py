@@ -6,7 +6,7 @@ from pydantic_settings import BaseSettings
 SETTINGS_CACHE_FILE = os.path.join("cache", "settings_cache.json")
 
 class Settings(BaseSettings):
-    MYLAR_PORT: int = 8090
+    COMICARR_PORT: int = 8090
     SECRET_KEY: str = "placeholder_secret_key"
     LOG_LEVEL: str = "INFO"
 
@@ -159,7 +159,7 @@ class Settings(BaseSettings):
     SAB_PRIORITY: str = "Default"
     SAB_REMOVE_COMPLETED: bool = False
     SAB_REMOVE_FAILED: bool = False
-    SAB_TO_MYLAR: bool = False
+    SAB_TO_COMICARR: bool = False
     SAB_USERNAME: str = ""
     SAB_VERSION: str = ""
     # NZBGet
@@ -195,9 +195,9 @@ class Settings(BaseSettings):
                     if hasattr(self, k):
                         setattr(self, k, v)
                 self._last_loaded_mtime = os.path.getmtime(SETTINGS_CACHE_FILE)
-                logging.getLogger("mylar").info("Settings cache loaded/reloaded from disk.")
+                logging.getLogger("comicarr").info("Settings cache loaded/reloaded from disk.")
             except Exception as e:
-                logging.getLogger("mylar").error(f"Failed to reload settings cache: {e}")
+                logging.getLogger("comicarr").error(f"Failed to reload settings cache: {e}")
 
     def check_and_reload(self) -> None:
         if os.path.exists(SETTINGS_CACHE_FILE):

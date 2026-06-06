@@ -168,7 +168,7 @@ def upgrade() -> None:
     sa.Column('SAB_PRIORITY', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('SAB_REMOVE_COMPLETED', sa.Boolean(), nullable=False),
     sa.Column('SAB_REMOVE_FAILED', sa.Boolean(), nullable=False),
-    sa.Column('SAB_TO_MYLAR', sa.Boolean(), nullable=False),
+    sa.Column('SAB_TO_COMICARR', sa.Boolean(), nullable=False),
     sa.Column('SAB_USERNAME', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('SAB_VERSION', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('NZBGET_CLIENT_POST_PROCESSING', sa.Boolean(), nullable=False),

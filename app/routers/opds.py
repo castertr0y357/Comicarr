@@ -162,8 +162,8 @@ async def opds_catalog(
             request,
             "opds.xml",
             {
-                "title": "Mylar OPDS Catalog",
-                "id": "mylar:opds:root",
+                "title": "Comicarr OPDS Catalog",
+                "id": "comicarr:opds:root",
                 "updated": now_str,
                 "links": links,
                 "entries": entries
@@ -211,7 +211,7 @@ async def opds_catalog(
             "opds.xml",
             {
                 "title": "OPDS - Publishers",
-                "id": "mylar:opds:publishers",
+                "id": "comicarr:opds:publishers",
                 "updated": now_str,
                 "links": links,
                 "entries": paginated_entries
@@ -255,7 +255,7 @@ async def opds_catalog(
             "opds.xml",
             {
                 "title": f"Publisher - {pubid}",
-                "id": f"mylar:opds:publisher:{pubid}",
+                "id": f"comicarr:opds:publisher:{pubid}",
                 "updated": now_str,
                 "links": links,
                 "entries": paginated_entries
@@ -296,7 +296,7 @@ async def opds_catalog(
             "opds.xml",
             {
                 "title": "All Titles",
-                "id": "mylar:opds:alltitles",
+                "id": "comicarr:opds:alltitles",
                 "updated": now_str,
                 "links": links,
                 "entries": paginated_entries
@@ -367,7 +367,7 @@ async def opds_catalog(
             "opds.xml",
             {
                 "title": f"Series - {comic.comic_name}",
-                "id": f"mylar:opds:comic:{comic.comic_id}",
+                "id": f"comicarr:opds:comic:{comic.comic_id}",
                 "updated": now_str,
                 "links": links,
                 "entries": paginated_entries
@@ -424,7 +424,7 @@ async def opds_catalog(
             "opds.xml",
             {
                 "title": "Recent Arrivals",
-                "id": "mylar:opds:recent",
+                "id": "comicarr:opds:recent",
                 "updated": now_str,
                 "links": links,
                 "entries": paginated_entries

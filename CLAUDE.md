@@ -1,4 +1,4 @@
-# mylar3 - Project Rules & Skills
+# Comicarr - Project Rules & Skills
 
 This file defines the structure for local workspace rules and skills.
 
@@ -42,7 +42,7 @@ All generated code must be clean, maintainable, and production-ready.
 3. **Error Handling & Logging**:
    - Do not use broad `except Exception:` blocks without logging or re-raising.
    - Use built-in logging libraries instead of raw print/console statements in production code.
-   - **Mylar Logging Standard**: Keep Mylar's existing straightforward logging pattern. Use `logger.info`, `logger.warn`, `logger.error`, and `logger.debug`/`logger.fdebug` for tracing. Honor the `loglevel` config setting and the verbose debugging toggle (`logger.fdebug` / `logger.debug` should only write when `mylar.LOG_LEVEL >= 2`). Ensure logs remain clean, plain-text, and easily readable without unnecessary clutter.
+   - **Comicarr Logging Standard**: Keep Comicarr's existing straightforward logging pattern. Use `logger.info`, `logger.warn`, `logger.error`, and `logger.debug`/`logger.fdebug` for tracing. Honor the `loglevel` config setting and the verbose debugging toggle (`logger.fdebug` / `logger.debug` should only write when `settings.LOG_LEVEL >= 2`). Ensure logs remain clean, plain-text, and easily readable without unnecessary clutter.
 
 4. **Aesthetics & UI Standards**:
    - Maintain a premium visual design: consistent typography, harmonious color palettes, smooth transitions, proper margins, and descriptive spacing.

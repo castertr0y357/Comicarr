@@ -147,7 +147,7 @@ class SystemSettings(SQLModel, table=True):
     SAB_PRIORITY: str = "Default"
     SAB_REMOVE_COMPLETED: bool = False
     SAB_REMOVE_FAILED: bool = False
-    SAB_TO_MYLAR: bool = False
+    SAB_TO_COMICARR: bool = False
     SAB_USERNAME: str = ""
     SAB_VERSION: str = ""
     # NZBGet

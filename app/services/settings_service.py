@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import settings, SETTINGS_CACHE_FILE
 from app.models.settings import SystemSettings
 
-logger = logging.getLogger("mylar")
+logger = logging.getLogger("comicarr")
 
 async def initialize_settings(session: AsyncSession) -> None:
     """

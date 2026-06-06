@@ -98,7 +98,7 @@ async def test_opds_catalog_flow(client, db_session, mock_cbz):
     assert response.status_code == 200
     assert "application/atom+xml" in response.headers["content-type"]
     xml_text = response.text
-    assert "Mylar OPDS Catalog" in xml_text
+    assert "Comicarr OPDS Catalog" in xml_text
     assert "cmd=Recent" in xml_text
     assert "cmd=Publishers" in xml_text
     assert "cmd=AllTitles" in xml_text

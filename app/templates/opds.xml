@@ -7,7 +7,7 @@
   <id>{{ id }}</id>
   <updated>{{ updated }}</updated>
   <author>
-    <name>Mylar3 Server</name>
+    <name>Comicarr Server</name>
   </author>
   
   {% for link in links %}

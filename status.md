@@ -1,6 +1,6 @@
-# Project Status: mylar3
+# Project Status: Comicarr
 
-This file tracks the current features, environment status, and pending/completed tasks for mylar3 (comic book grabber fork).
+This file tracks the current features, environment status, and pending/completed tasks for Comicarr (comic book grabber fork).
 
 ## Environment Info
 - **Language**: Python 3.14.3 (active virtual environment `.venv`)
