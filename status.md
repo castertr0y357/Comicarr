@@ -29,6 +29,8 @@ This file tracks the current features, environment status, and pending/completed
     - Integrated native Prowlarr JSON search results parsing and system status API diagnostics.
     - Added automated migration logic for seamless onboarding of legacy configurations on startup.
     - Added 4 unit tests covering connection check mocking, data migrations, API endpoints, and Prowlarr JSON parsing.
+  - Fixed a critical HTML formatting bug in [settings.html](file:///e:/Coding%20Projects/Comicarr/app/templates/settings.html) where the `div#providers` tab content container was missing its closing `</div>` tag. This mismatched nesting distorted the DOM tree, causing HTMX's `closest .provider-card` and `closest .add-provider-card` selectors to return `null` and throw a Javascript `TypeError` at runtime.
+
 
 
 
