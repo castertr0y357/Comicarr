@@ -438,9 +438,29 @@ async def api_test_provider(
     url: str = Form(...),
     apikey: Optional[str] = Form(None)
 ):
+    import json
     from app.services.search import check_indexer
     ok = await check_indexer(url, apikey or "", type)
     if ok:
-        return HTMLResponse(content='<span style="color: #10b981; font-weight: 600; font-size: 0.9rem;">Connection Successful! ✅</span>')
+        trigger = json.dumps({"show-toast": {"message": "Connection Successful!", "type": "success"}})
+        content = (
+            '<div class="test-indicator-box test-success">'
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">'
+            '<polyline points="20 6 9 17 4 12"></polyline>'
+            '</svg>'
+            '<span>Connection Successful!</span>'
+            '</div>'
+        )
+        return HTMLResponse(content=content, headers={"HX-Trigger": trigger})
     else:
-        return HTMLResponse(content='<span style="color: #ef4444; font-weight: 600; font-size: 0.9rem;">Connection Failed ❌</span>')
+        trigger = json.dumps({"show-toast": {"message": "Connection Failed", "type": "error"}})
+        content = (
+            '<div class="test-indicator-box test-failed">'
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">'
+            '<line x1="18" y1="6" x2="6" y2="18"></line>'
+            '<line x1="6" y1="6" x2="18" y2="18"></line>'
+            '</svg>'
+            '<span>Connection Failed</span>'
+            '</div>'
+        )
+        return HTMLResponse(content=content, headers={"HX-Trigger": trigger})

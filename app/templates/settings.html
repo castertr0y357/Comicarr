@@ -1100,5 +1100,10 @@
             showToast("Failed to add search provider.", "error");
         }
     }
+
+    // Global listener for HTMX-triggered toasts
+    document.body.addEventListener('show-toast', function(evt) {
+        showToast(evt.detail.message, evt.detail.type);
+    });
 </script>
 {% endblock %}
