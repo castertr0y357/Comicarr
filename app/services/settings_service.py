@@ -42,6 +42,54 @@ async def initialize_settings(session: AsyncSession) -> None:
                 raise integrity_err
             logger.info("System settings was concurrently initialized, using existing row.")
     
+    # Check and migrate legacy search providers if table is empty
+    from app.models.provider import SearchProvider
+    stmt_prov = select(SearchProvider)
+    res_prov = await session.execute(stmt_prov)
+    existing_provs = res_prov.scalars().all()
+    
+    if not existing_provs:
+        migrated = False
+        
+        # Newznab migration
+        if db_settings.NEWZNAB_PROVIDERS:
+            from app.services.search import parse_providers_string
+            nzb_list = parse_providers_string(db_settings.NEWZNAB_PROVIDERS, "newznab")
+            for item in nzb_list:
+                prov = SearchProvider(
+                    name=item.name,
+                    type="newznab",
+                    url=item.url,
+                    apikey=item.apikey,
+                    enabled=True,
+                    categories="7030,8020"
+                )
+                session.add(prov)
+                migrated = True
+            db_settings.NEWZNAB_PROVIDERS = ""
+            
+        # Torznab migration
+        if db_settings.TORZNAB_PROVIDERS:
+            from app.services.search import parse_providers_string
+            tor_list = parse_providers_string(db_settings.TORZNAB_PROVIDERS, "torznab")
+            for item in tor_list:
+                prov = SearchProvider(
+                    name=item.name,
+                    type="torznab",
+                    url=item.url,
+                    apikey=item.apikey,
+                    enabled=True,
+                    categories="7030,8020"
+                )
+                session.add(prov)
+                migrated = True
+            db_settings.TORZNAB_PROVIDERS = ""
+            
+        if migrated:
+            logger.info("[Settings] Migrated legacy search providers to the new database table.")
+            await session.commit()
+            await session.refresh(db_settings)
+
     # Always write settings cache file on startup to make sure it matches DB
     await sync_db_to_cache(db_settings)
     settings.reload_from_cache()

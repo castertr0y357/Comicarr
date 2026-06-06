@@ -349,3 +349,98 @@ async def api_import_scan(
             "candidates": res["unmatched_candidates"]
         }
     )
+
+@router.post("/providers", response_class=HTMLResponse)
+async def api_add_provider(
+    request: Request,
+    name: str = Form(...),
+    type: str = Form(...),
+    url: str = Form(...),
+    apikey: Optional[str] = Form(None),
+    enabled: bool = Form(False),
+    categories: Optional[str] = Form("7030,8020"),
+    session: AsyncSession = Depends(get_session)
+):
+    from app.models.provider import SearchProvider
+    provider = SearchProvider(
+        name=name,
+        type=type,
+        url=url.rstrip("/"),
+        apikey=apikey,
+        enabled=enabled,
+        categories=categories
+    )
+    session.add(provider)
+    await session.commit()
+    await session.refresh(provider)
+    
+    return templates.TemplateResponse(
+        request,
+        "components/provider_card.html",
+        {"provider": provider}
+    )
+
+@router.put("/providers/{provider_id}", response_class=HTMLResponse)
+async def api_update_provider(
+    request: Request,
+    provider_id: int,
+    name: str = Form(...),
+    type: str = Form(...),
+    url: str = Form(...),
+    apikey: Optional[str] = Form(None),
+    enabled: bool = Form(False),
+    categories: Optional[str] = Form(None),
+    session: AsyncSession = Depends(get_session)
+):
+    from app.models.provider import SearchProvider
+    stmt = select(SearchProvider).where(SearchProvider.id == provider_id)
+    res = await session.execute(stmt)
+    provider = res.scalars().first()
+    if not provider:
+        raise HTTPException(status_code=404, detail="Provider not found")
+        
+    provider.name = name
+    provider.type = type
+    provider.url = url.rstrip("/")
+    provider.apikey = apikey
+    provider.enabled = enabled
+    provider.categories = categories
+    
+    session.add(provider)
+    await session.commit()
+    await session.refresh(provider)
+    
+    return templates.TemplateResponse(
+        request,
+        "components/provider_card.html",
+        {"provider": provider}
+    )
+
+@router.delete("/providers/{provider_id}", response_class=HTMLResponse)
+async def api_delete_provider(
+    provider_id: int,
+    session: AsyncSession = Depends(get_session)
+):
+    from app.models.provider import SearchProvider
+    stmt = select(SearchProvider).where(SearchProvider.id == provider_id)
+    res = await session.execute(stmt)
+    provider = res.scalars().first()
+    if not provider:
+        raise HTTPException(status_code=404, detail="Provider not found")
+        
+    await session.delete(provider)
+    await session.commit()
+    return HTMLResponse(content="", status_code=200)
+
+@router.post("/providers/test", response_class=HTMLResponse)
+async def api_test_provider(
+    type: str = Form(...),
+    url: str = Form(...),
+    apikey: Optional[str] = Form(None)
+):
+    from app.services.search import check_indexer
+    ok = await check_indexer(url, apikey or "", type)
+    if ok:
+        return HTMLResponse(content='<span style="color: #10b981; font-weight: 600; font-size: 0.9rem;">Connection Successful! ✅</span>')
+    else:
+        return HTMLResponse(content='<span style="color: #ef4444; font-weight: 600; font-size: 0.9rem;">Connection Failed ❌</span>')

@@ -18,6 +18,7 @@ from app.models.issue import Issue
 from app.models.settings import SystemSettings
 from app.models.weekly import WeeklyPullList
 from app.models.failed_release import FailedRelease
+from app.models.provider import SearchProvider
 
 # this is the Alembic Config object, which provides access to the values within the .ini file in use.
 config = context.config

@@ -15,6 +15,7 @@
         <aside class="settings-sidebar">
             <button type="button" class="tab-btn active" onclick="showTab('comicvine', event)">ComicVine</button>
             <button type="button" class="tab-btn" onclick="showTab('scheduler', event)">Search & Scheduler</button>
+            <button type="button" class="tab-btn" onclick="showTab('providers', event)">Search Providers</button>
             <button type="button" class="tab-btn" onclick="showTab('downloaders', event)">Downloaders</button>
             <button type="button" class="tab-btn" onclick="showTab('torrents', event)">Torrents</button>
             <button type="button" class="tab-btn" onclick="showTab('notifications', event)">Notifications</button>
@@ -93,16 +94,14 @@
                     <span class="form-help">Automatically submit matching releases to downloaders when found during automated search.</span>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label" for="NEWZNAB_PROVIDERS">Newznab Providers (Usenet)</label>
-                    <textarea class="form-input" id="NEWZNAB_PROVIDERS" name="NEWZNAB_PROVIDERS" rows="3" placeholder="Name|URL|APIKey (one per line)">{{ settings.NEWZNAB_PROVIDERS }}</textarea>
-                    <span class="form-help">Format: <code>ProviderName|https://api.domain.com|your_api_key</code>. Add one provider per line.</span>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="TORZNAB_PROVIDERS">Torznab Providers (Torrents)</label>
-                    <textarea class="form-input" id="TORZNAB_PROVIDERS" name="TORZNAB_PROVIDERS" rows="3" placeholder="Name|URL|APIKey (one per line)">{{ settings.TORZNAB_PROVIDERS }}</textarea>
-                    <span class="form-help">Format: <code>TrackerName|http://localhost:9117/api/v2.0/indexers/tracker/results/torznab|your_api_key</code>.</span>
+                <div class="form-group" style="padding: 1.25rem; border: 1px dashed var(--border-color); border-radius: 8px; background-color: var(--bg-surface); margin-top: 1.5rem;">
+                    <span style="font-size: 0.9rem; color: var(--text-secondary); display: flex; align-items: center; gap: 0.5rem;">
+                        <span>ℹ️</span>
+                        <span>
+                            Search providers (Newznab, Torznab, and Prowlarr) have been moved to their own dedicated 
+                            <a href="javascript:void(0)" onclick="showTab('providers'); document.querySelectorAll('.tab-btn').forEach(btn => { if(btn.innerText.trim() === 'Search Providers') btn.click(); })" style="color: var(--accent-cyan); font-weight: 500; text-decoration: underline;">Search Providers tab</a>.
+                        </span>
+                    </span>
                 </div>
             </div>
 
@@ -889,9 +888,92 @@
                     <div class="form-group">
                         <label class="form-label" for="JD2_DEST_DIR">JD2 Destination Folder Override</label>
                         <input class="form-input" type="text" id="JD2_DEST_DIR" name="JD2_DEST_DIR" value="{{ settings.JD2_DEST_DIR }}">
+            </div>
+
+            <!-- Search Providers Tab -->
+            <div id="providers" class="tab-content" style="display: none;">
+                <h3>Search Providers & Indexers</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.9rem;">
+                    Manage your Usenet (Newznab), Torrent (Torznab), and Prowlarr indexers. Testing connections will query capability feeds or status APIs.
+                </p>
+
+                <!-- List of existing providers -->
+                <div id="providers-list">
+                    {% for provider in providers %}
+                        {% include "components/provider_card.html" %}
+                    {% else %}
+                        <div id="no-providers-msg" style="text-align: center; padding: 2rem; color: var(--text-secondary); font-style: italic; border: 1px dashed var(--border-color); border-radius: 8px; margin-bottom: 1.5rem;">
+                            No search providers configured yet.
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Add New Provider Card -->
+                <div class="add-provider-card" style="border: 1px solid var(--border-color); border-radius: 10px; padding: 1.5rem; background-color: var(--bg-surface); margin-top: 1.5rem;">
+                    <h4 style="margin: 0 0 1rem 0; color: var(--accent-cyan); border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Add New Search Provider</h4>
+                    
+                    <div class="form-row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label class="form-label" style="font-size: 0.8rem;">Provider Name</label>
+                            <input class="form-input" type="text" id="add-provider-name" name="name" placeholder="e.g. MyIndexer" style="padding: 0.4rem 0.6rem; font-size: 0.9rem;">
+                        </div>
+                        
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label class="form-label" style="font-size: 0.8rem;">Type</label>
+                            <select class="form-input" id="add-provider-type" name="type" style="padding: 0.4rem 0.6rem; font-size: 0.9rem; background-color: var(--bg-main);">
+                                <option value="newznab">Newznab (Usenet)</option>
+                                <option value="torznab">Torznab (Torrent)</option>
+                                <option value="prowlarr">Prowlarr</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row" style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-top: 0.75rem;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label class="form-label" style="font-size: 0.8rem;">Host URL</label>
+                            <input class="form-input" type="url" id="add-provider-url" name="url" placeholder="e.g. http://localhost:9696 or https://api.indexer.com" style="padding: 0.4rem 0.6rem; font-size: 0.9rem;">
+                        </div>
+                        
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label class="form-label" style="font-size: 0.8rem;">API Key</label>
+                            <input class="form-input" type="password" id="add-provider-apikey" name="apikey" placeholder="API Key" style="padding: 0.4rem 0.6rem; font-size: 0.9rem;">
+                        </div>
+                    </div>
+
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 0.75rem;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label class="form-label" style="font-size: 0.8rem;">Categories (Comma-separated)</label>
+                            <input class="form-input" type="text" id="add-provider-categories" name="categories" value="7030,8020" placeholder="7030,8020" style="padding: 0.4rem 0.6rem; font-size: 0.9rem;">
+                        </div>
+                    </div>
+
+                    <label class="form-checkbox-label" style="margin-top: 0.75rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <input class="form-checkbox" type="checkbox" id="add-provider-enabled" name="enabled" checked value="true">
+                        Enabled by default
+                    </label>
+
+                    <div id="add-test-result" style="margin-top: 0.75rem; min-height: 20px;"></div>
+
+                    <div style="display: flex; justify-content: flex-end; align-items: center; gap: 0.75rem; margin-top: 1.25rem; border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
+                        <button type="button" class="btn btn-secondary btn-sm"
+                                hx-post="/api/providers/test"
+                                hx-include="closest .add-provider-card input, closest .add-provider-card select"
+                                hx-target="#add-test-result"
+                                hx-indicator="#add-test-indicator">
+                            Test Connection
+                        </button>
+                        <span id="add-test-indicator" class="htmx-indicator" style="align-self: center; font-size: 0.85rem; color: var(--text-secondary);">Testing...</span>
+
+                        <button type="button" class="btn btn-primary btn-sm"
+                                hx-post="/api/providers"
+                                hx-include="closest .add-provider-card input, closest .add-provider-card select"
+                                hx-target="#providers-list"
+                                hx-swap="beforeend"
+                                hx-on::after-request="clearAddForm(event)">
+                            Add Provider
+                        </button>
                     </div>
                 </div>
-            </div>
 
             <!-- Form Actions -->
             <div class="form-actions">
@@ -992,6 +1074,28 @@
             }
         } else {
             showToast("Notification test failed (" + xhr.status + ").", "error");
+        }
+    }
+
+    // Clear add provider inputs on successful addition
+    function clearAddForm(event) {
+        if (event.detail.successful) {
+            document.getElementById('add-provider-name').value = '';
+            document.getElementById('add-provider-url').value = '';
+            document.getElementById('add-provider-apikey').value = '';
+            document.getElementById('add-provider-categories').value = '7030,8020';
+            document.getElementById('add-provider-enabled').checked = true;
+            document.getElementById('add-test-result').innerHTML = '';
+            
+            // Remove the "no providers configured" placeholder if it exists
+            const noProvsMsg = document.getElementById('no-providers-msg');
+            if (noProvsMsg) {
+                noProvsMsg.remove();
+            }
+            
+            showToast("Search provider added successfully!", "success");
+        } else {
+            showToast("Failed to add search provider.", "error");
         }
     }
 </script>

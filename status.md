@@ -23,6 +23,12 @@ This file tracks the current features, environment status, and pending/completed
     - Set up database migrations with Alembic and updated [app/core/db.py](file:///e:/Coding%20Projects/mylar3/app/core/db.py) to run migrations programmatically on startup.
     - Externalized the weekly pull proxy URL configuration to the dynamic `SystemSettings` schema.
     - Standardized API route form parameter validations using structured dependency injection.
+  - Modernized Search Provider configuration:
+    - Shifted Newznab and Torznab configurations from pipe-separated settings strings to a dedicated database-backed `SearchProvider` table.
+    - Replaced raw textareas with a premium UI panel featuring individual cards for each provider, supporting inline adding, editing, deleting, and testing connection flows via HTMX.
+    - Integrated native Prowlarr JSON search results parsing and system status API diagnostics.
+    - Added automated migration logic for seamless onboarding of legacy configurations on startup.
+    - Added 4 unit tests covering connection check mocking, data migrations, API endpoints, and Prowlarr JSON parsing.
 
 
 

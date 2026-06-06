@@ -47,13 +47,18 @@ def parse_providers_string(providers_str: str, provider_type: str) -> List[Index
             )
     return providers
 
-def get_all_indexers() -> List[IndexerConfig]:
+async def get_all_indexers() -> List[Any]:
     """
-    Get configured Newznab and Torznab indexers from Settings.
+    Get configured enabled search providers from the database.
     """
-    newznabs = parse_providers_string(settings.NEWZNAB_PROVIDERS, "newznab")
-    torznabs = parse_providers_string(settings.TORZNAB_PROVIDERS, "torznab")
-    return newznabs + torznabs
+    from app.core.db import async_session
+    from app.models.provider import SearchProvider
+    from sqlmodel import select
+
+    async with async_session() as session:
+        stmt = select(SearchProvider).where(SearchProvider.enabled == True)
+        res = await session.execute(stmt)
+        return res.scalars().all()
 
 def generate_search_queries(series_name: str, issue_number: str) -> List[str]:
     """
@@ -152,20 +157,73 @@ def parse_xml_results(xml_content: bytes, provider: IndexerConfig) -> List[Searc
         )
     return items
 
+def parse_prowlarr_results(data: List[Dict[str, Any]], provider: Any) -> List[SearchResultItem]:
+    """
+    Parse Prowlarr JSON search results.
+    """
+    items = []
+    for item in data:
+        title = item.get("title", "").strip()
+        if not title:
+            continue
+
+        download_url = item.get("downloadUrl") or item.get("magnetUrl")
+        if not download_url:
+            continue
+
+        size = item.get("size", 0)
+        indexer = item.get("indexer", provider.name)
+        protocol = item.get("protocol", "torrent").lower()
+        item_type = "nzb" if protocol == "usenet" else "torrent"
+        pub_date = item.get("publishDate")
+
+        items.append(
+            SearchResultItem(
+                title=title,
+                download_url=download_url,
+                size=size,
+                provider_name=indexer,
+                type=item_type,
+                published_date=pub_date
+            )
+        )
+    return items
+
 async def query_indexer(
     client: httpx.AsyncClient,
-    provider: IndexerConfig,
+    provider: Any,
     query: str,
     categories: str = "7030,8020"
 ) -> List[SearchResultItem]:
     """
     Sends a query request to a single indexer and returns the parsed SearchResultItems.
     """
+    if provider.type == "prowlarr":
+        params = {
+            "apikey": provider.apikey,
+            "query": query
+        }
+        cats = getattr(provider, "categories", None) or categories
+        if cats:
+            params["categories"] = cats
+
+        url = f"{provider.url.rstrip('/')}/api/v1/search"
+        logger.fdebug(f"[Search] Querying Prowlarr {provider.name} at {url} for query '{query}'")
+
+        try:
+            response = await client.get(url, params=params, verify=settings.CV_VERIFY, timeout=15.0)
+            if response.status_code == 200:
+                return parse_prowlarr_results(response.json(), provider)
+            logger.warning(f"[Search] Prowlarr {provider.name} returned HTTP {response.status_code}")
+        except Exception as e:
+            logger.error(f"[Search] Error querying Prowlarr provider {provider.name}: {e}")
+        return []
+
     params = {
         "apikey": provider.apikey,
         "t": "search",
         "q": query,
-        "cat": categories
+        "cat": getattr(provider, "categories", None) or categories
     }
     url = f"{provider.url}/api"
     logger.fdebug(f"[Search] Querying provider {provider.name} at {url} for query '{query}'")
@@ -230,7 +288,7 @@ async def search_issue(comic: Comic, issue: Issue) -> List[SearchResultItem]:
     Concurrently search Newznab and Torznab indexers for a specific issue.
     Runs validation filtering on title strings using parsing.py.
     """
-    indexers = get_all_indexers()
+    indexers = await get_all_indexers()
     if not indexers and not (settings.ENABLE_DDL or settings.ENABLE_GETCOMICS):
         logger.warning("[Search] No search providers/indexers are configured.")
         return []
@@ -312,26 +370,43 @@ async def search_issue(comic: Comic, issue: Issue) -> List[SearchResultItem]:
     matched_results.sort(key=lambda x: x.size, reverse=True)
     return matched_results
 
-async def check_indexer(url: str, apikey: str) -> bool:
+async def check_indexer(url: str, apikey: str, type: str = "newznab") -> bool:
     """
-    Verify if the indexer is online and responding to cap queries.
+    Verify if the indexer is online and responding.
     """
-    params = {
-        "apikey": apikey,
-        "t": "caps"
-    }
-    api_url = f"{url.rstrip('/')}/api"
-    logger.info(f"[Search] Running capability diagnostic check for {api_url}")
-    
-    try:
-        async with httpx.AsyncClient(verify=settings.CV_VERIFY, timeout=10.0) as client:
-            response = await client.get(api_url, params=params)
-            if response.status_code == 200:
-                # Basic validation that it returns XML capabilities
-                if b"<caps>" in response.content or b"<error" in response.content:
-                    logger.info(f"[Search] Indexer diagnostic check successful for {api_url}")
-                    return True
-            logger.warning(f"[Search] Indexer check returned status code {response.status_code} for {api_url}")
-    except Exception as e:
-        logger.error(f"[Search] Indexer diagnostic check failed for {api_url}: {e}")
-    return False
+    if type == "prowlarr":
+        api_url = f"{url.rstrip('/')}/api/v1/system/status"
+        params = {"apikey": apikey}
+        logger.info(f"[Search] Running Prowlarr system status check for {api_url}")
+        try:
+            async with httpx.AsyncClient(verify=settings.CV_VERIFY, timeout=10.0) as client:
+                response = await client.get(api_url, params=params)
+                if response.status_code == 200:
+                    data = response.json()
+                    if "version" in data:
+                        logger.info(f"[Search] Prowlarr system status check successful for {api_url}")
+                        return True
+                logger.warning(f"[Search] Prowlarr check returned status code {response.status_code} for {api_url}")
+        except Exception as e:
+            logger.error(f"[Search] Prowlarr check failed for {api_url}: {e}")
+        return False
+    else:
+        params = {
+            "apikey": apikey,
+            "t": "caps"
+        }
+        api_url = f"{url.rstrip('/')}/api"
+        logger.info(f"[Search] Running capability diagnostic check for {api_url}")
+
+        try:
+            async with httpx.AsyncClient(verify=settings.CV_VERIFY, timeout=10.0) as client:
+                response = await client.get(api_url, params=params)
+                if response.status_code == 200:
+                    # Basic validation that it returns XML capabilities
+                    if b"<caps>" in response.content or b"<error" in response.content:
+                        logger.info(f"[Search] Indexer diagnostic check successful for {api_url}")
+                        return True
+                logger.warning(f"[Search] Indexer check returned status code {response.status_code} for {api_url}")
+        except Exception as e:
+            logger.error(f"[Search] Indexer diagnostic check failed for {api_url}: {e}")
+        return False

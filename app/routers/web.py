@@ -94,11 +94,17 @@ async def read_comic_detail(
     )
 
 @router.get("/settings", response_class=HTMLResponse)
-async def read_settings_page(request: Request):
+async def read_settings_page(request: Request, session: AsyncSession = Depends(get_session)):
+    from app.models.provider import SearchProvider
+    stmt = select(SearchProvider)
+    res = await session.execute(stmt)
+    providers = res.scalars().all()
+    providers.sort(key=lambda p: p.name.lower())
+    
     return templates.TemplateResponse(
         request,
         "settings.html",
-        {"settings": settings, "active_page": "settings"}
+        {"settings": settings, "providers": providers, "active_page": "settings"}
     )
 
 @router.get("/weekly", response_class=HTMLResponse)

@@ -39,6 +39,7 @@ async def init_db():
             from app.models.settings import SystemSettings
             from app.models.weekly import WeeklyPullList
             from app.models.failed_release import FailedRelease
+            from app.models.provider import SearchProvider
         except ImportError:
             pass
         await conn.run_sync(run_alembic_migrations)
