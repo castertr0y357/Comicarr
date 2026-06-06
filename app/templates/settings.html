@@ -10,21 +10,23 @@
     </span>
 </div>
 
-<form hx-post="/api/settings" hx-swap="none" hx-on::after-request="handleSaveResult(event)" id="settings-form">
-    <div class="settings-container">
-        <aside class="settings-sidebar">
-            <button type="button" class="tab-btn active" onclick="showTab('comicvine', event)">ComicVine</button>
-            <button type="button" class="tab-btn" onclick="showTab('scheduler', event)">Search & Scheduler</button>
-            <button type="button" class="tab-btn" onclick="showTab('providers', event)">Search Providers</button>
-            <button type="button" class="tab-btn" onclick="showTab('downloaders', event)">Downloaders</button>
-            <button type="button" class="tab-btn" onclick="showTab('torrents', event)">Torrents</button>
-            <button type="button" class="tab-btn" onclick="showTab('notifications', event)">Notifications</button>
-            <button type="button" class="tab-btn" onclick="showTab('folders', event)">Folders & Files</button>
-            <button type="button" class="tab-btn" onclick="showTab('metatagging', event)">Metatagging</button>
-            <button type="button" class="tab-btn" onclick="showTab('weeklypulls', event)">Weekly Pulls</button>
-            <button type="button" class="tab-btn" onclick="showTab('ddl', event)">Direct Downloads</button>
-        </aside>
+<!-- Persistent layout: sidebar always visible, form/providers panels swap in the content column -->
+<div class="settings-container" id="settings-page-layout">
+    <aside class="settings-sidebar" id="settings-sidebar">
+        <button type="button" class="tab-btn active" onclick="showTab('comicvine', event)">ComicVine</button>
+        <button type="button" class="tab-btn" onclick="showTab('scheduler', event)">Search &amp; Scheduler</button>
+        <button type="button" class="tab-btn" onclick="showTab('providers', event)">Search Providers</button>
+        <button type="button" class="tab-btn" onclick="showTab('downloaders', event)">Downloaders</button>
+        <button type="button" class="tab-btn" onclick="showTab('torrents', event)">Torrents</button>
+        <button type="button" class="tab-btn" onclick="showTab('notifications', event)">Notifications</button>
+        <button type="button" class="tab-btn" onclick="showTab('folders', event)">Folders &amp; Files</button>
+        <button type="button" class="tab-btn" onclick="showTab('metatagging', event)">Metatagging</button>
+        <button type="button" class="tab-btn" onclick="showTab('weeklypulls', event)">Weekly Pulls</button>
+        <button type="button" class="tab-btn" onclick="showTab('ddl', event)">Direct Downloads</button>
+    </aside>
 
+    <!-- Settings form: wraps only the main content pane (not the sidebar) -->
+    <form hx-post="/api/settings" hx-swap="none" hx-on::after-request="handleSaveResult(event)" id="settings-form" style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column;">
         <!-- Main Settings Pane -->
         <main class="settings-content">
             <!-- ComicVine Tab -->
@@ -897,14 +899,10 @@
                 <button type="submit" class="btn btn-primary">Save Settings</button>
             </div>
         </main>
-    </div>
-</form>
+    </form>
 
-<!-- Search Providers Tab (outside main form to prevent field name collisions) -->
-<div class="settings-container" id="providers-settings-wrapper" style="margin-top: 0; padding-top: 0; display: none;">
-    <!-- Spacer matching sidebar width so providers content aligns with other tabs -->
-    <div style="width: 250px; flex-shrink: 0;"></div>
-    <main class="settings-content">
+    <!-- Search Providers Panel (outside form to prevent field-name collisions on HTMX requests) -->
+    <main id="providers-settings-wrapper" class="settings-content" style="display: none;">
             <div id="providers" class="tab-content" style="display: none;">
                 <h3>Search Providers & Indexers</h3>
                 <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.9rem;">
@@ -991,6 +989,7 @@
             </div>
     </main>
 </div>
+<!-- End settings-page-layout -->
 
 <!-- Toast Container -->
 <div id="toast" class="toast">
@@ -1000,26 +999,27 @@
 <script>
     // Tab switching logic
     function showTab(tabId, event) {
-        // Hide all tab content panes (covers both the main form and providers wrapper)
+        // Hide all tab content panes
         document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
         // Deactivate all tab buttons
         document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
 
-        // The providers tab is in a separate wrapper outside the form
+        // Swap between the settings form panel and the providers panel.
+        // The sidebar (#settings-sidebar) is outside both and is always visible.
         const providersWrapper = document.getElementById('providers-settings-wrapper');
         const settingsForm = document.getElementById('settings-form');
 
         if (tabId === 'providers') {
-            // Show providers wrapper, hide main form container
-            if (providersWrapper) providersWrapper.style.display = 'flex';
+            // Show providers panel, hide form panel
             if (settingsForm) settingsForm.style.display = 'none';
+            if (providersWrapper) providersWrapper.style.display = 'block';
         } else {
-            // Show main form container, hide providers wrapper
+            // Show form panel (flex-column), hide providers panel
+            if (settingsForm) settingsForm.style.display = 'flex';
             if (providersWrapper) providersWrapper.style.display = 'none';
-            if (settingsForm) settingsForm.style.display = '';
         }
 
-        // Show selected tab content pane
+        // Show the selected tab-content pane inside whichever panel is active
         document.getElementById(tabId).style.display = 'block';
         // Mark current button as active
         if (event) {
