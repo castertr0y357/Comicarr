@@ -15,12 +15,13 @@ This file tracks the current features, environment status, and pending/completed
     - Added database migration logic in `initialize_settings` to automatically migrate existing user configurations on startup.
     - Updated references, docstrings, and tests in `test_weekly_pull.py` and `test_settings.py` to target the new proxy URL.
     - Staged, verified compatibility with the full test suite, and committed.
-  - Implemented interactive `(i)` help tooltips for all system configuration options:
+  - Implemented interactive `(i)` help tooltips for all system configuration options and search providers:
     - Added CSS styling in `style.css` for a rounded inline info button and floating dark glassmorphism tooltip card.
     - Integrated descriptions and functional impact strings for settings under ComicVine, Scheduler, Downloaders, Torrents, Notifications, Folders, Metatagging, Weekly Pulls, and DDL tabs.
+    - Completed a full settings audit and added missing info buttons to 21 settings fields (e.g. SABnzbd/NZBGet/qBittorrent/Transmission credentials, week folders, proxy settings, external server fields, and provider creation fields).
     - Added Javascript dynamic positioning logic in `settings.html` protecting against off-screen clipping and viewport collisions.
     - Re-bound tooltip triggers on HTMX page swaps (`htmx:afterSwap`) to keep them fully interactive under AJAX swaps.
-    - Staged, verified compatibility with the full test suite, and committed.
+    - Verified layout, positioning, and hover states with browser automation screenshots and verified that all 165 test cases continue to pass cleanly.
   - Implemented multi-downloader support with an ecosystem-based preference system:
     - Extended database schemas with individual enabled toggles and priority settings (`USENET_PREFERENCE`, `TORRENT_PREFERENCE`).
     - Added a new `"multiple"` mode to the system configurations with dynamic settings-panel UI toggles.
