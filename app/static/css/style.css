@@ -725,3 +725,75 @@ a:hover {
     color: #ef4444;
 }
 
+/* Tooltip trigger button */
+.info-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.08);
+    color: var(--text-secondary);
+    font-size: 9px;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    margin-left: 6px;
+    transition: var(--transition-fast);
+    vertical-align: middle;
+    line-height: 1;
+}
+
+.info-btn:hover, .info-btn.active {
+    background-color: var(--accent-cyan);
+    color: var(--bg-main);
+}
+
+/* Floating Tooltip Container */
+.settings-tooltip {
+    position: absolute;
+    display: none;
+    opacity: 0;
+    width: 290px;
+    background-color: #161f38;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color-hover);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+    pointer-events: none;
+    transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+    transform: translateY(4px);
+}
+
+.settings-tooltip.show {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.settings-tooltip-title {
+    font-weight: 600;
+    color: var(--accent-cyan);
+    margin-bottom: 0.25rem;
+    font-family: var(--font-heading);
+}
+
+.settings-tooltip-desc {
+    color: var(--text-primary);
+}
+
+.settings-tooltip-impact {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.75rem;
+    color: var(--accent-amber);
+}
+
+

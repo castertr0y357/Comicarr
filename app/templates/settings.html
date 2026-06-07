@@ -37,25 +37,37 @@
                 </p>
 
                 <div class="form-group">
-                    <label class="form-label" for="COMICVINE_API_KEY">ComicVine API Key</label>
+                    <label class="form-label" for="COMICVINE_API_KEY">
+                        ComicVine API Key
+                        <button type="button" class="info-btn" data-title="ComicVine API Key" data-desc="The API key required to authenticate with ComicVine's metadata service." data-impact="Without a valid key, Comicarr cannot search for, fetch details for, or add new comic series.">i</button>
+                    </label>
                     <input class="form-input" type="text" id="COMICVINE_API_KEY" name="COMICVINE_API_KEY" value="{{ settings.COMICVINE_API_KEY }}" placeholder="Enter API Key">
                     <span class="form-help">Get a key from <a href="https://comicvine.gamespot.com/api/" target="_blank">ComicVine API Page</a>.</span>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="COMICVINE_API_URL">ComicVine API URL</label>
+                    <label class="form-label" for="COMICVINE_API_URL">
+                        ComicVine API URL
+                        <button type="button" class="info-btn" data-title="ComicVine API URL" data-desc="The base endpoint for ComicVine API metadata queries." data-impact="Changing this allows routing metadata queries through a local mirror or a proxy.">i</button>
+                    </label>
                     <input class="form-input" type="url" id="COMICVINE_API_URL" name="COMICVINE_API_URL" value="{{ settings.COMICVINE_API_URL }}">
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="CVAPI_RATE">Rate Limit (Seconds)</label>
+                        <label class="form-label" for="CVAPI_RATE">
+                            Rate Limit (Seconds)
+                            <button type="button" class="info-btn" data-title="API Rate Limit" data-desc="The minimum delay in seconds between consecutive requests to ComicVine." data-impact="ComicVine strictly throttles calls. A value below 2.0 seconds risks getting your IP temporarily blocked.">i</button>
+                        </label>
                         <input class="form-input" type="number" step="0.1" id="CVAPI_RATE" name="CVAPI_RATE" value="{{ settings.CVAPI_RATE }}">
                         <span class="form-help">Minimum delay between API calls (recommended: 2.0).</span>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="CV_USER_AGENT">User Agent</label>
+                        <label class="form-label" for="CV_USER_AGENT">
+                            User Agent
+                            <button type="button" class="info-btn" data-title="User Agent String" data-desc="The HTTP User-Agent identifier string sent with API requests to ComicVine." data-impact="ComicVine blocks generic Python script requests; keeping a custom client name prevents query blockages.">i</button>
+                        </label>
                         <input class="form-input" type="text" id="CV_USER_AGENT" name="CV_USER_AGENT" value="{{ settings.CV_USER_AGENT }}">
                     </div>
                 </div>
@@ -64,6 +76,7 @@
                     <label class="form-checkbox-label">
                         <input class="form-checkbox" type="checkbox" id="CV_VERIFY" name="CV_VERIFY" {% if settings.CV_VERIFY %}checked{% endif %}>
                         Verify SSL Certificates
+                        <button type="button" class="info-btn" data-title="Verify SSL Certificates" data-desc="Toggles validation of ComicVine's SSL certificate authority chain on connections." data-impact="Disable only if you run into local SSL trust store issues or decryption proxy certificate validation errors.">i</button>
                     </label>
                 </div>
 
@@ -89,13 +102,19 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="SEARCH_INTERVAL_MINUTES">Wanted Search Interval (Minutes)</label>
+                        <label class="form-label" for="SEARCH_INTERVAL_MINUTES">
+                            Wanted Search Interval (Minutes)
+                            <button type="button" class="info-btn" data-title="Wanted Search Interval" data-desc="Frequency in minutes that the periodic scheduler runs indexer scans to search for issues marked as Wanted." data-impact="Lowering this speeds up detection but increases network calls and API key utilization. Changing the interval requires a container restart to update the Celery task scheduler.">i</button>
+                        </label>
                         <input class="form-input" type="number" id="SEARCH_INTERVAL_MINUTES" name="SEARCH_INTERVAL_MINUTES" value="{{ settings.SEARCH_INTERVAL_MINUTES }}">
                         <span class="form-help">How often the Celery Beat scheduler scans for Wanted issues. (Requires container restart to apply schedule interval change).</span>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="CV_SYNC_INTERVAL_HOURS">Metadata Sync Interval (Hours)</label>
+                        <label class="form-label" for="CV_SYNC_INTERVAL_HOURS">
+                            Metadata Sync Interval (Hours)
+                            <button type="button" class="info-btn" data-title="Metadata Sync Interval" data-desc="Interval in hours for updating comic metadata, pull lists, and issue definitions with ComicVine." data-impact="Ensures series names, issue covers, and publish dates match the central database. Higher numbers reduce API requests.">i</button>
+                        </label>
                         <input class="form-input" type="number" id="CV_SYNC_INTERVAL_HOURS" name="CV_SYNC_INTERVAL_HOURS" value="{{ settings.CV_SYNC_INTERVAL_HOURS }}">
                     </div>
                 </div>
@@ -104,6 +123,7 @@
                     <label class="form-checkbox-label">
                         <input class="form-checkbox" type="checkbox" id="GRAB_ON_MATCH" name="GRAB_ON_MATCH" {% if settings.GRAB_ON_MATCH %}checked{% endif %}>
                         Auto-Grab on Match
+                        <button type="button" class="info-btn" data-title="Auto-Grab on Match" data-desc="Toggles automatic snatching when the periodic search scheduler matches a wanted issue on an indexer." data-impact="If enabled, matching releases are immediately sent to your downloader. If disabled, matches are found but must be manually grabbed from the search logs.">i</button>
                     </label>
                     <span class="form-help">Automatically submit matching releases to downloaders when found during automated search.</span>
                 </div>
@@ -127,7 +147,10 @@
                 </p>
 
                 <div class="form-group">
-                    <label class="form-label" for="DOWNLOADER_TYPE">Downloader Type</label>
+                    <label class="form-label" for="DOWNLOADER_TYPE">
+                        Downloader Type
+                        <button type="button" class="info-btn" data-title="Downloader Type" data-desc="The type of downloader integration to use." data-impact="Changing this controls whether snatch requests are sent to a single client (e.g. SABnzbd, NZBGet, qBittorrent, Transmission) or set to 'Multiple' to enable dynamic ecosystem-based fallback prioritizing.">i</button>
+                    </label>
                     <select class="form-input" id="DOWNLOADER_TYPE" name="DOWNLOADER_TYPE" onchange="updateDownloaderFields()">
                         <option value="none" {% if settings.DOWNLOADER_TYPE == 'none' %}selected{% endif %}>None (Manual snatch only)</option>
                         <option value="sabnzbd" {% if settings.DOWNLOADER_TYPE == 'sabnzbd' %}selected{% endif %}>SABnzbd (Usenet)</option>
@@ -143,7 +166,10 @@
                     <h4 style="margin-bottom: 1rem; color: var(--accent-cyan); border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Multi-Downloader Ecosystem Preferences</h4>
                     <div class="form-row">
                         <div class="form-group">
-                            <label class="form-label" for="USENET_PREFERENCE">Preferred Usenet Downloader</label>
+                            <label class="form-label" for="USENET_PREFERENCE">
+                                Preferred Usenet Downloader
+                                <button type="button" class="info-btn" data-title="Preferred Usenet Client" data-desc="Specifies which Usenet client is tried first when a Usenet release (.nzb) is grabbed in 'Multiple' mode." data-impact="If the preferred downloader is unreachable or fails to queue the file, the alternative client is used as fallback.">i</button>
+                            </label>
                             <select class="form-input" id="USENET_PREFERENCE" name="USENET_PREFERENCE">
                                 <option value="sabnzbd" {% if settings.USENET_PREFERENCE == 'sabnzbd' %}selected{% endif %}>SABnzbd</option>
                                 <option value="nzbget" {% if settings.USENET_PREFERENCE == 'nzbget' %}selected{% endif %}>NZBGet</option>
@@ -151,7 +177,10 @@
                             <span class="form-help">Client to try first for Usenet (.nzb) downloads.</span>
                         </div>
                         <div class="form-group">
-                            <label class="form-label" for="TORRENT_PREFERENCE">Preferred Torrent Downloader</label>
+                            <label class="form-label" for="TORRENT_PREFERENCE">
+                                Preferred Torrent Downloader
+                                <button type="button" class="info-btn" data-title="Preferred Torrent Client" data-desc="Specifies which Torrent client is tried first when a torrent release is grabbed in 'Multiple' mode." data-impact="If the preferred downloader is unreachable or fails to queue the torrent, the alternative client is used as fallback.">i</button>
+                            </label>
                             <select class="form-input" id="TORRENT_PREFERENCE" name="TORRENT_PREFERENCE">
                                 <option value="qbittorrent" {% if settings.TORRENT_PREFERENCE == 'qbittorrent' %}selected{% endif %}>qBittorrent</option>
                                 <option value="transmission" {% if settings.TORRENT_PREFERENCE == 'transmission' %}selected{% endif %}>Transmission</option>
@@ -167,21 +196,31 @@
                         <label class="form-checkbox-label" style="font-weight: bold; color: var(--text-primary); cursor: pointer;">
                             <input class="form-checkbox" type="checkbox" id="SABNZBD_ENABLED" name="SABNZBD_ENABLED" {% if settings.SABNZBD_ENABLED %}checked{% endif %} onchange="toggleClientFields('sabnzbd')">
                             Enable SABnzbd Client
+                            <button type="button" class="info-btn" data-title="Enable SABnzbd" data-desc="Toggles SABnzbd integration on or off when operating in 'Multiple' downloader mode." data-impact="Enables SABnzbd as one of the active Usenet snatch destinations.">i</button>
                         </label>
                     </div>
                     <div id="sabnzbd-inner-fields" style="display: {% if settings.DOWNLOADER_TYPE == 'sabnzbd' or (settings.DOWNLOADER_TYPE == 'multiple' and settings.SABNZBD_ENABLED) %}block{% else %}none{% endif %}; margin-top: 1.25rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
                         <h4 style="margin-bottom: 1rem; color: var(--accent-cyan);">SABnzbd Configuration</h4>
                         <div class="form-group">
-                            <label class="form-label" for="SABNZBD_URL">SABnzbd Host URL</label>
+                            <label class="form-label" for="SABNZBD_URL">
+                                SABnzbd Host URL
+                                <button type="button" class="info-btn" data-title="SABnzbd Host URL" data-desc="The base Web UI API connection address for your SABnzbd downloader instance." data-impact="Used by Comicarr to query downloading queue and submit NZB snatch tasks.">i</button>
+                            </label>
                             <input class="form-input" type="url" id="SABNZBD_URL" name="SABNZBD_URL" value="{{ settings.SABNZBD_URL }}">
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label class="form-label" for="SABNZBD_API_KEY">API Key</label>
+                                <label class="form-label" for="SABNZBD_API_KEY">
+                                    API Key
+                                    <button type="button" class="info-btn" data-title="SABnzbd API Key" data-desc="Your SABnzbd API key or NZB key used for authentication." data-impact="Enables secure connection validation between Comicarr and the SABnzbd interface.">i</button>
+                                </label>
                                 <input class="form-input" type="password" id="SABNZBD_API_KEY" name="SABNZBD_API_KEY" value="{{ settings.SABNZBD_API_KEY }}">
                             </div>
                             <div class="form-group">
-                                <label class="form-label" for="SABNZBD_CATEGORY">Category</label>
+                                <label class="form-label" for="SABNZBD_CATEGORY">
+                                    Category
+                                    <button type="button" class="info-btn" data-title="SABnzbd Category" data-desc="The target category string configured within your SABnzbd settings for comics." data-impact="Ensures snatched files are categorized correctly by the downloader.">i</button>
+                                </label>
                                 <input class="form-input" type="text" id="SABNZBD_CATEGORY" name="SABNZBD_CATEGORY" value="{{ settings.SABNZBD_CATEGORY }}">
                             </div>
                         </div>
@@ -197,7 +236,10 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label class="form-label" for="SAB_PRIORITY">Priority</label>
+                                <label class="form-label" for="SAB_PRIORITY">
+                                    Priority
+                                    <button type="button" class="info-btn" data-title="Queue Priority" data-desc="The download priority assigned to snatched comic book NZB files when added to SABnzbd." data-impact="Allows prioritizing comics over other standard downloader queues.">i</button>
+                                </label>
                                 <select class="form-input" id="SAB_PRIORITY" name="SAB_PRIORITY">
                                     <option value="Default" {% if settings.SAB_PRIORITY == 'Default' %}selected{% endif %}>Default</option>
                                     <option value="High" {% if settings.SAB_PRIORITY == 'High' %}selected{% endif %}>High</option>
@@ -206,13 +248,19 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label class="form-label" for="SAB_DIRECTORY">Completed Download Directory</label>
+                                <label class="form-label" for="SAB_DIRECTORY">
+                                    Completed Download Directory
+                                    <button type="button" class="info-btn" data-title="Completed Download Directory" data-desc="The folder directory where SABnzbd saves finished files for post-processing." data-impact="Leave empty to let SABnzbd save to its default path. Useful if Comicarr and SABnzbd are in container environments with different mount paths.">i</button>
+                                </label>
                                 <input class="form-input" type="text" id="SAB_DIRECTORY" name="SAB_DIRECTORY" value="{{ settings.SAB_DIRECTORY }}" placeholder="Leave empty for client default">
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label class="form-label" for="SAB_MOVING_DELAY">Moving Delay (Seconds)</label>
+                                <label class="form-label" for="SAB_MOVING_DELAY">
+                                    Moving Delay (Seconds)
+                                    <button type="button" class="info-btn" data-title="SABnzbd Moving Delay" data-desc="Delay in seconds to wait after a download is finished before post-processing." data-impact="Allows files to fully flush to disk before Comicarr attempts tag modification.">i</button>
+                                </label>
                                 <input class="form-input" type="number" id="SAB_MOVING_DELAY" name="SAB_MOVING_DELAY" value="{{ settings.SAB_MOVING_DELAY }}">
                             </div>
                             <div class="form-group">
@@ -225,12 +273,14 @@
                                 <label class="form-checkbox-label">
                                     <input class="form-checkbox" type="checkbox" id="SAB_CLIENT_POST_PROCESSING" name="SAB_CLIENT_POST_PROCESSING" {% if settings.SAB_CLIENT_POST_PROCESSING %}checked{% endif %}>
                                     Client-side Post-Processing (CDH)
+                                    <button type="button" class="info-btn" data-title="Completed Download Handling" data-desc="Allows SABnzbd to notify Comicarr upon job completion to automatically trigger library post-processing." data-impact="If enabled, Comicarr monitors SABnzbd completion queues.">i</button>
                                 </label>
                             </div>
                             <div class="form-group">
                                 <label class="form-checkbox-label">
                                     <input class="form-checkbox" type="checkbox" id="SAB_REMOVE_COMPLETED" name="SAB_REMOVE_COMPLETED" {% if settings.SAB_REMOVE_COMPLETED %}checked{% endif %}>
                                     Remove Completed Downloads
+                                    <button type="button" class="info-btn" data-title="Remove Completed" data-desc="Toggles automatic deletion of successful download jobs from SABnzbd history." data-impact="If enabled, histories are kept clean after processing.">i</button>
                                 </label>
                             </div>
                         </div>
@@ -270,12 +320,16 @@
                         <label class="form-checkbox-label" style="font-weight: bold; color: var(--text-primary); cursor: pointer;">
                             <input class="form-checkbox" type="checkbox" id="NZBGET_ENABLED" name="NZBGET_ENABLED" {% if settings.NZBGET_ENABLED %}checked{% endif %} onchange="toggleClientFields('nzbget')">
                             Enable NZBGet Client
+                            <button type="button" class="info-btn" data-title="Enable NZBGet" data-desc="Toggles NZBGet integration on or off when operating in 'Multiple' downloader mode." data-impact="Enables NZBGet as one of the active Usenet snatch destinations.">i</button>
                         </label>
                     </div>
                     <div id="nzbget-inner-fields" style="display: {% if settings.DOWNLOADER_TYPE == 'nzbget' or (settings.DOWNLOADER_TYPE == 'multiple' and settings.NZBGET_ENABLED) %}block{% else %}none{% endif %}; margin-top: 1.25rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
                         <h4 style="margin-bottom: 1rem; color: var(--accent-cyan);">NZBGet Configuration</h4>
                         <div class="form-group">
-                            <label class="form-label" for="NZBGET_URL">NZBGet Host URL</label>
+                            <label class="form-label" for="NZBGET_URL">
+                                NZBGet Host URL
+                                <button type="button" class="info-btn" data-title="NZBGet Host URL" data-desc="The base connection address for your NZBGet downloader instance." data-impact="Used by Comicarr to query downloading queue and submit NZB snatch tasks.">i</button>
+                            </label>
                             <input class="form-input" type="url" id="NZBGET_URL" name="NZBGET_URL" value="{{ settings.NZBGET_URL }}">
                         </div>
                         <div class="form-row">
@@ -288,7 +342,10 @@
                                 <input class="form-input" type="password" id="NZBGET_PASSWORD" name="NZBGET_PASSWORD" value="{{ settings.NZBGET_PASSWORD }}">
                             </div>
                             <div class="form-group">
-                                <label class="form-label" for="NZBGET_CATEGORY">Category</label>
+                                <label class="form-label" for="NZBGET_CATEGORY">
+                                    Category
+                                    <button type="button" class="info-btn" data-title="NZBGet Category" data-desc="The target category configured within NZBGet for comic book downloads." data-impact="Allows NZBGet to group and place comic files under a dedicated folder path.">i</button>
+                                </label>
                                 <input class="form-input" type="text" id="NZBGET_CATEGORY" name="NZBGET_CATEGORY" value="{{ settings.NZBGET_CATEGORY }}">
                             </div>
                         </div>
@@ -304,7 +361,10 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label class="form-label" for="NZBGET_PRIORITY">Priority</label>
+                                <label class="form-label" for="NZBGET_PRIORITY">
+                                    Priority
+                                    <button type="button" class="info-btn" data-title="Queue Priority" data-desc="The download priority assigned to snatched comic book NZB files when added to NZBGet." data-impact="Allows prioritizing comics over other standard downloader queues.">i</button>
+                                </label>
                                 <select class="form-input" id="NZBGET_PRIORITY" name="NZBGET_PRIORITY">
                                     <option value="" {% if settings.NZBGET_PRIORITY == '' %}selected{% endif %}>Default</option>
                                     <option value="Very High" {% if settings.NZBGET_PRIORITY == 'Very High' %}selected{% endif %}>Very High</option>
@@ -314,7 +374,10 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label class="form-label" for="NZBGET_DIRECTORY">Completed Download Directory</label>
+                                <label class="form-label" for="NZBGET_DIRECTORY">
+                                    Completed Download Directory
+                                    <button type="button" class="info-btn" data-title="Completed Download Directory" data-desc="The folder directory where NZBGet saves finished files for post-processing." data-impact="Leave empty to let NZBGet save to its default path. Useful if Comicarr and NZBGet are in container environments with different mount paths.">i</button>
+                                </label>
                                 <input class="form-input" type="text" id="NZBGET_DIRECTORY" name="NZBGET_DIRECTORY" value="{{ settings.NZBGET_DIRECTORY }}" placeholder="Leave empty for client default">
                             </div>
                         </div>
@@ -322,6 +385,7 @@
                             <label class="form-checkbox-label">
                                 <input class="form-checkbox" type="checkbox" id="NZBGET_CLIENT_POST_PROCESSING" name="NZBGET_CLIENT_POST_PROCESSING" {% if settings.NZBGET_CLIENT_POST_PROCESSING %}checked{% endif %}>
                                 Client-side Post-Processing (CDH)
+                                <button type="button" class="info-btn" data-title="Completed Download Handling" data-desc="Allows NZBGet to notify Comicarr upon job completion to automatically trigger library post-processing." data-impact="If enabled, Comicarr monitors NZBGet completion queues.">i</button>
                             </label>
                         </div>
 
@@ -346,12 +410,16 @@
                         <label class="form-checkbox-label" style="font-weight: bold; color: var(--text-primary); cursor: pointer;">
                             <input class="form-checkbox" type="checkbox" id="QBITTORRENT_ENABLED" name="QBITTORRENT_ENABLED" {% if settings.QBITTORRENT_ENABLED %}checked{% endif %} onchange="toggleClientFields('qbittorrent')">
                             Enable qBittorrent Client
+                            <button type="button" class="info-btn" data-title="Enable qBittorrent" data-desc="Toggles qBittorrent integration on or off when operating in 'Multiple' downloader mode." data-impact="Enables qBittorrent as one of the active torrent snatch destinations.">i</button>
                         </label>
                     </div>
                     <div id="qbittorrent-inner-fields" style="display: {% if settings.DOWNLOADER_TYPE == 'qbittorrent' or (settings.DOWNLOADER_TYPE == 'multiple' and settings.QBITTORRENT_ENABLED) %}block{% else %}none{% endif %}; margin-top: 1.25rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
                         <h4 style="margin-bottom: 1rem; color: var(--accent-cyan);">qBittorrent Configuration</h4>
                         <div class="form-group">
-                            <label class="form-label" for="QBITTORRENT_URL">qBittorrent Host URL</label>
+                            <label class="form-label" for="QBITTORRENT_URL">
+                                qBittorrent Host URL
+                                <button type="button" class="info-btn" data-title="qBittorrent Host URL" data-desc="The base Web UI API connection address for your qBittorrent downloader instance." data-impact="Used by Comicarr to query downloading queue and submit torrent snatch tasks.">i</button>
+                            </label>
                             <input class="form-input" type="url" id="QBITTORRENT_URL" name="QBITTORRENT_URL" value="{{ settings.QBITTORRENT_URL }}">
                         </div>
                         <div class="form-row">
@@ -364,13 +432,19 @@
                                 <input class="form-input" type="password" id="QBITTORRENT_PASSWORD" name="QBITTORRENT_PASSWORD" value="{{ settings.QBITTORRENT_PASSWORD }}">
                             </div>
                             <div class="form-group">
-                                <label class="form-label" for="QBITTORRENT_CATEGORY">Category/Tag</label>
+                                <label class="form-label" for="QBITTORRENT_CATEGORY">
+                                    Category/Tag
+                                    <button type="button" class="info-btn" data-title="qBittorrent Category/Tag" data-desc="The category or tag label applied to snatched torrents." data-impact="Allows grouping downloads in the Web UI and directs completed torrent files to specific paths.">i</button>
+                                </label>
                                 <input class="form-input" type="text" id="QBITTORRENT_CATEGORY" name="QBITTORRENT_CATEGORY" value="{{ settings.QBITTORRENT_CATEGORY }}">
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label class="form-label" for="QBITTORRENT_FOLDER">Download Folder Override</label>
+                                <label class="form-label" for="QBITTORRENT_FOLDER">
+                                    Download Folder Override
+                                    <button type="button" class="info-btn" data-title="Completed Download Directory" data-desc="The folder directory where qBittorrent saves finished files for post-processing." data-impact="Leave empty to let qBittorrent save to its default path. Useful if Comicarr and qBittorrent are in container environments with different mount paths.">i</button>
+                                </label>
                                 <input class="form-input" type="text" id="QBITTORRENT_FOLDER" name="QBITTORRENT_FOLDER" value="{{ settings.QBITTORRENT_FOLDER }}" placeholder="Leave empty for default">
                             </div>
                             <div class="form-group">
@@ -379,7 +453,10 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="form-label" for="QBITTORRENT_LOADACTION">Load Action</label>
+                            <label class="form-label" for="QBITTORRENT_LOADACTION">
+                                Load Action
+                                <button type="button" class="info-btn" data-title="Load Action" data-desc="The operational state torrent files are added in." data-impact="Controls whether torrents start immediately, force start to bypass queue limits, or are added in a paused state.">i</button>
+                            </label>
                             <select class="form-input" id="QBITTORRENT_LOADACTION" name="QBITTORRENT_LOADACTION">
                                 <option value="default" {% if settings.QBITTORRENT_LOADACTION == 'default' %}selected{% endif %}>Default</option>
                                 <option value="force_start" {% if settings.QBITTORRENT_LOADACTION == 'force_start' %}selected{% endif %}>Force Start</option>
@@ -408,12 +485,16 @@
                         <label class="form-checkbox-label" style="font-weight: bold; color: var(--text-primary); cursor: pointer;">
                             <input class="form-checkbox" type="checkbox" id="TRANSMISSION_ENABLED" name="TRANSMISSION_ENABLED" {% if settings.TRANSMISSION_ENABLED %}checked{% endif %} onchange="toggleClientFields('transmission')">
                             Enable Transmission Client
+                            <button type="button" class="info-btn" data-title="Enable Transmission" data-desc="Toggles Transmission integration on or off when operating in 'Multiple' downloader mode." data-impact="Enables Transmission as one of the active torrent snatch destinations.">i</button>
                         </label>
                     </div>
                     <div id="transmission-inner-fields" style="display: {% if settings.DOWNLOADER_TYPE == 'transmission' or (settings.DOWNLOADER_TYPE == 'multiple' and settings.TRANSMISSION_ENABLED) %}block{% else %}none{% endif %}; margin-top: 1.25rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
                         <h4 style="margin-bottom: 1rem; color: var(--accent-cyan);">Transmission Configuration</h4>
                         <div class="form-group">
-                            <label class="form-label" for="TRANSMISSION_URL">Transmission Host URL</label>
+                            <label class="form-label" for="TRANSMISSION_URL">
+                                Transmission Host URL
+                                <button type="button" class="info-btn" data-title="Transmission Host URL" data-desc="The base Web UI API connection address for your Transmission downloader instance." data-impact="Used by Comicarr to submit torrent files and verify completed items.">i</button>
+                            </label>
                             <input class="form-input" type="url" id="TRANSMISSION_URL" name="TRANSMISSION_URL" value="{{ settings.TRANSMISSION_URL }}">
                         </div>
                         <div class="form-row">
@@ -426,12 +507,18 @@
                                 <input class="form-input" type="password" id="TRANSMISSION_PASSWORD" name="TRANSMISSION_PASSWORD" value="{{ settings.TRANSMISSION_PASSWORD }}">
                             </div>
                             <div class="form-group">
-                                <label class="form-label" for="TRANSMISSION_DIRECTORY">Download Directory (Optional)</label>
+                                <label class="form-label" for="TRANSMISSION_DIRECTORY">
+                                    Download Directory (Optional)
+                                    <button type="button" class="info-btn" data-title="Completed Download Directory" data-desc="The folder directory where Transmission saves finished files for post-processing." data-impact="Leave empty to let Transmission save to its default path. Useful if Comicarr and Transmission are in container environments with different mount paths.">i</button>
+                                </label>
                                 <input class="form-input" type="text" id="TRANSMISSION_DIRECTORY" name="TRANSMISSION_DIRECTORY" value="{{ settings.TRANSMISSION_DIRECTORY }}" placeholder="Leave empty for default">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="form-label" for="TRANSMISSION_HOST">Transmission Host Override (Optional)</label>
+                            <label class="form-label" for="TRANSMISSION_HOST">
+                                Transmission Host Override (Optional)
+                                <button type="button" class="info-btn" data-title="Transmission Host Header Override" data-desc="Allows overriding the HTTP Host header sent in RPC requests to bypass RPC-whitelist limits." data-impact="Useful if Transmission runs on an alternate domain name or complex Docker setup.">i</button>
+                            </label>
                             <input class="form-input" type="text" id="TRANSMISSION_HOST" name="TRANSMISSION_HOST" value="{{ settings.TRANSMISSION_HOST }}" placeholder="localhost">
                         </div>
 
@@ -459,7 +546,10 @@
                 </p>
 
                 <div class="form-group">
-                    <label class="form-label" for="APPRISE_URLS">Apprise Notification URLs</label>
+                    <label class="form-label" for="APPRISE_URLS">
+                        Apprise Notification URLs
+                        <button type="button" class="info-btn" data-title="Apprise Notification URLs" data-desc="A list of comma-separated connection URLs for dispatching push notifications (supports Discord, Telegram, Pushover, Gotify, etc.)." data-impact="Enables notifications to be sent to configured services when system events trigger.">i</button>
+                    </label>
                     <textarea class="form-input" id="APPRISE_URLS" name="APPRISE_URLS" rows="3" placeholder="discord://webhook_id/token, tgram://bot_token/chat_id">{{ settings.APPRISE_URLS }}</textarea>
                     <span class="form-help">Comma-separated URLs. Supports Discord, Telegram, Pushover, Gotify, Slack, Email, and 70+ others. See <a href="https://github.com/caronc/apprise/wiki" target="_blank">Apprise Wiki</a>.</span>
                 </div>
@@ -471,6 +561,7 @@
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="NOTIFY_ON_SNATCH" name="NOTIFY_ON_SNATCH" {% if settings.NOTIFY_ON_SNATCH %}checked{% endif %}>
                             Notify on Snatch
+                            <button type="button" class="info-btn" data-title="Notify on Snatch" data-desc="Toggles notifications when an issue matches and is sent to your downloader queue." data-impact="Sends an alert immediately upon scheduling a snatch.">i</button>
                         </label>
                         <span class="form-help">Send alert when an issue is sent to the downloader.</span>
                     </div>
@@ -479,6 +570,7 @@
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="NOTIFY_ON_FAILURE" name="NOTIFY_ON_FAILURE" {% if settings.NOTIFY_ON_FAILURE %}checked{% endif %}>
                             Notify on Grab Failure
+                            <button type="button" class="info-btn" data-title="Notify on Grab Failure" data-desc="Toggles alerts when Comicarr fails to grab a release after checking all fallback options." data-impact="Notifies you if manual search intervention is required.">i</button>
                         </label>
                         <span class="form-help">Send alert if all downloader retries fail.</span>
                     </div>
@@ -488,6 +580,7 @@
                     <label class="form-checkbox-label">
                         <input class="form-checkbox" type="checkbox" id="NOTIFY_ON_NEW_ISSUES" name="NOTIFY_ON_NEW_ISSUES" {% if settings.NOTIFY_ON_NEW_ISSUES %}checked{% endif %}>
                         Notify on New Issues Discovered
+                        <button type="button" class="info-btn" data-title="Notify on New Issues" data-desc="Toggles notifications when the sync scheduler detects and registers newly published issues in your watchlist series." data-impact="Alerts you when new series issues are added to the list.">i</button>
                     </label>
                     <span class="form-help">Send alert during periodic metadata sync when new issues are added as Wanted.</span>
                 </div>
@@ -511,12 +604,18 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="CACHE_DIR">Cache Folder Path</label>
+                        <label class="form-label" for="CACHE_DIR">
+                            Cache Folder Path
+                            <button type="button" class="info-btn" data-title="Cache Directory" data-desc="The folder path where Comicarr stores temporary metadata caches and search buffers." data-impact="Changing this relocates internal caches. Recommended to leave as default.">i</button>
+                        </label>
                         <input class="form-input" type="text" id="CACHE_DIR" name="CACHE_DIR" value="{{ settings.CACHE_DIR }}">
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="DESTINATION_DIR">Destination Folder Path (Comics Root)</label>
+                        <label class="form-label" for="DESTINATION_DIR">
+                            Destination Folder Path (Comics Root)
+                            <button type="button" class="info-btn" data-title="Comics Destination Directory" data-desc="The absolute root directory where sorted comic book files are permanently stored." data-impact="Comicarr moves completed issues here under organized series directories.">i</button>
+                        </label>
                         <input class="form-input" type="text" id="DESTINATION_DIR" name="DESTINATION_DIR" value="{{ settings.DESTINATION_DIR }}">
                     </div>
                 </div>
@@ -525,6 +624,7 @@
                     <label class="form-checkbox-label">
                         <input class="form-checkbox" type="checkbox" id="CREATE_FOLDERS" name="CREATE_FOLDERS" {% if settings.CREATE_FOLDERS %}checked{% endif %}>
                         Automatically Create Series Folders
+                        <button type="button" class="info-btn" data-title="Auto-Create Folders" data-desc="Automatically generates publisher and series folders inside your Destination directory." data-impact="If disabled, files are dumped directly into the Destination folder root.">i</button>
                     </label>
                     <span class="form-help">Create folders like <code>comics/Marvel Comics/Spider-Man (2018)</code> on import.</span>
                 </div>
@@ -534,6 +634,7 @@
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="COMIC_COVER_LOCAL" name="COMIC_COVER_LOCAL" {% if settings.COMIC_COVER_LOCAL %}checked{% endif %}>
                             Download Local Issue Covers (cover.jpg)
+                            <button type="button" class="info-btn" data-title="Local Issue Covers" data-desc="Downloads issue front cover artwork into the series folder alongside the files." data-impact="Useful for local media servers (Ubooquity, Kavita) reading folder art assets.">i</button>
                         </label>
                     </div>
 
@@ -541,6 +642,7 @@
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="COVER_FOLDER_LOCAL" name="COVER_FOLDER_LOCAL" {% if settings.COVER_FOLDER_LOCAL %}checked{% endif %}>
                             Download Local Series Folder Art (folder.jpg)
+                            <button type="button" class="info-btn" data-title="Local Series Art" data-desc="Downloads the series group artwork as folder.jpg inside the series directory." data-impact="Used by system file browsers and OPDS catalogs to display series-level thumbnails.">i</button>
                         </label>
                     </div>
                 </div>
@@ -550,24 +652,32 @@
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="RENAME_FILES" name="RENAME_FILES" {% if settings.RENAME_FILES %}checked{% endif %}>
                             Rename Downloaded Files
+                            <button type="button" class="info-btn" data-title="Rename Files" data-desc="Toggles automatic renaming of snatched comic archive files on post-processing." data-impact="Replaces messy downloader filenames with standard formatting (e.g. Series Issue Year).">i</button>
                         </label>
                     </div>
                     <div class="form-group">
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="MOVE_FILES" name="MOVE_FILES" {% if settings.MOVE_FILES %}checked{% endif %}>
                             Move Files to Destination
+                            <button type="button" class="info-btn" data-title="Move Files" data-desc="Toggles moving completed files from the download directory to your Destination library root." data-impact="If disabled, completed files remain in the download client folder.">i</button>
                         </label>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="FILE_FORMAT">File Name Format</label>
+                        <label class="form-label" for="FILE_FORMAT">
+                            File Name Format
+                            <button type="button" class="info-btn" data-title="File Naming Schema" data-desc="Pattern template used when renaming files (supports variables: $Series, $Issue, $Year, $Annual)." data-impact="Ensures all files in your library share uniform naming styles.">i</button>
+                        </label>
                         <input class="form-input" type="text" id="FILE_FORMAT" name="FILE_FORMAT" value="{{ settings.FILE_FORMAT }}">
                         <span class="form-help">Variables: <code>$Series</code>, <code>$Issue</code>, <code>$Year</code>, <code>$Annual</code>.</span>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="FOLDER_FORMAT">Folder Format</label>
+                        <label class="form-label" for="FOLDER_FORMAT">
+                            Folder Format
+                            <button type="button" class="info-btn" data-title="Folder Naming Schema" data-desc="Pattern template used when creating series folders inside the Destination library." data-impact="Controls naming layout on disk (e.g. Series (Year)).">i</button>
+                        </label>
                         <input class="form-input" type="text" id="FOLDER_FORMAT" name="FOLDER_FORMAT" value="{{ settings.FOLDER_FORMAT }}">
                     </div>
                 </div>
@@ -577,18 +687,23 @@
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="FAILED_DOWNLOAD_HANDLING" name="FAILED_DOWNLOAD_HANDLING" {% if settings.FAILED_DOWNLOAD_HANDLING %}checked{% endif %}>
                             Failed Download Handling (FDH)
+                            <button type="button" class="info-btn" data-title="Failed Download Handling" data-desc="Monitors download queues for failed/stalled jobs and automatically blacklists bad releases." data-impact="Keeps your queue moving when specific files are corrupted or missing blocks.">i</button>
                         </label>
                     </div>
                     <div class="form-group">
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="FAILED_AUTO" name="FAILED_AUTO" {% if settings.FAILED_AUTO %}checked{% endif %}>
                             Auto-Retry Failed Downloads
+                            <button type="button" class="info-btn" data-title="Auto-Retry Failed" data-desc="Automatically scans alternative indexers and grabs a replacement release if the initial download fails." data-impact="Automates finding alternative releases without manual user intervention.">i</button>
                         </label>
                     </div>
                 </div>
 
                 <div class="form-group" style="margin-top: 1.5rem;">
-                    <label class="form-label" for="PREFERRED_QUALITY">Preferred Quality Profile</label>
+                    <label class="form-label" for="PREFERRED_QUALITY">
+                        Preferred Quality Profile
+                        <button type="button" class="info-btn" data-title="Quality Profile" data-desc="The priority rating profile used during indexer searches to select releases." data-impact="Forces the search engine to favor Digital/Retail copies over print scans when both are available.">i</button>
+                    </label>
                     <select class="form-input" id="PREFERRED_QUALITY" name="PREFERRED_QUALITY">
                         <option value="0" {% if settings.PREFERRED_QUALITY == 0 %}selected{% endif %}>Any Quality (Default)</option>
                         <option value="1" {% if settings.PREFERRED_QUALITY == 1 %}selected{% endif %}>Digital / Retail</option>
@@ -609,12 +724,14 @@
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="ENABLE_TORRENTS" name="ENABLE_TORRENTS" {% if settings.ENABLE_TORRENTS %}checked{% endif %}>
                             Enable Torrents Download
+                            <button type="button" class="info-btn" data-title="Enable Torrent Grabbing" data-desc="Toggles capability to parse and grab torrent files or magnet links." data-impact="Enables torrent download pipeline integrations.">i</button>
                         </label>
                     </div>
                     <div class="form-group">
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="ENABLE_TORRENT_SEARCH" name="ENABLE_TORRENT_SEARCH" {% if settings.ENABLE_TORRENT_SEARCH %}checked{% endif %}>
                             Enable Torrent Search Providers
+                            <button type="button" class="info-btn" data-title="Torrent Search" data-desc="Allows search routines to send query strings to Torznab and torrent indexer endpoints." data-impact="If disabled, search checks Usenet (Newznab) indexers only.">i</button>
                         </label>
                     </div>
                 </div>
@@ -624,18 +741,23 @@
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="ENABLE_PUBLIC" name="ENABLE_PUBLIC" {% if settings.ENABLE_PUBLIC %}checked{% endif %}>
                             Enable Public Torrent Trackers
+                            <button type="button" class="info-btn" data-title="Public Trackers" data-desc="Enables querying public tracker indexes when looking for comic issues." data-impact="Expands release availability, but may fetch lower quality files or non-retail prints.">i</button>
                         </label>
                     </div>
                     <div class="form-group">
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="PUBLIC_VERIFY" name="PUBLIC_VERIFY" {% if settings.PUBLIC_VERIFY %}checked{% endif %}>
                             Verify Public Tracker SSL
+                            <button type="button" class="info-btn" data-title="Public Trackers SSL" data-desc="Toggles SSL certificate verification when talking to public trackers." data-impact="Turn off only if you encounter certificate trust failures on public mirrors.">i</button>
                         </label>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="MINSEEDS">Minimum Seeders Threshold</label>
+                    <label class="form-label" for="MINSEEDS">
+                        Minimum Seeders Threshold
+                        <button type="button" class="info-btn" data-title="Minimum Seeders" data-desc="The minimum number of peers actively seeding a torrent release for it to be grabbed." data-impact="Filters out dead torrents that are likely to stall or fail downloading.">i</button>
+                    </label>
                     <input class="form-input" type="number" id="MINSEEDS" name="MINSEEDS" value="{{ settings.MINSEEDS }}">
                     <span class="form-help">Reject torrent releases with fewer seeders than this value.</span>
                 </div>
@@ -652,16 +774,23 @@
                     <label class="form-checkbox-label">
                         <input class="form-checkbox" type="checkbox" id="ENABLE_META" name="ENABLE_META" {% if settings.ENABLE_META %}checked{% endif %}>
                         Enable Metatagging
+                        <button type="button" class="info-btn" data-title="Enable Metatagging" data-desc="Toggles automatic embedding of metadata tags into comic book files during post-processing." data-impact="Requires the ComicTagger tool to be installed and accessible.">i</button>
                     </label>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="CMTAGGER_PATH">ComicTagger Executable Path</label>
+                        <label class="form-label" for="CMTAGGER_PATH">
+                            ComicTagger Executable Path
+                            <button type="button" class="info-btn" data-title="ComicTagger Executable" data-desc="The system command or absolute file path to the ComicTagger CLI executable tool." data-impact="Used by Comicarr to invoke metatagging on downloaded files.">i</button>
+                        </label>
                         <input class="form-input" type="text" id="CMTAGGER_PATH" name="CMTAGGER_PATH" value="{{ settings.CMTAGGER_PATH }}" placeholder="/usr/local/bin/comictagger">
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="CT_SETTINGSPATH">ComicTagger Settings Path</label>
+                        <label class="form-label" for="CT_SETTINGSPATH">
+                            ComicTagger Settings Path
+                            <button type="button" class="info-btn" data-title="Settings Profile Path" data-desc="The folder directory containing ComicTagger settings profile files." data-impact="Uses tags presets configured in comictagger configuration files.">i</button>
+                        </label>
                         <input class="form-input" type="text" id="CT_SETTINGSPATH" name="CT_SETTINGSPATH" value="{{ settings.CT_SETTINGSPATH }}" placeholder="~/.ComicTagger">
                     </div>
                 </div>
@@ -671,12 +800,14 @@
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="CBR2CBZ_ONLY" name="CBR2CBZ_ONLY" {% if settings.CBR2CBZ_ONLY %}checked{% endif %}>
                             Convert CBR to CBZ (Metadata is only written to CBZ)
+                            <button type="button" class="info-btn" data-title="Convert CBR to CBZ" data-desc="Automatically converts RAR-based CBR archives into standard ZIP-based CBZ formats." data-impact="XML metadata tags can only be embedded inside CBZ files, not CBRs.">i</button>
                         </label>
                     </div>
                     <div class="form-group">
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="CT_CBZ_OVERWRITE" name="CT_CBZ_OVERWRITE" {% if settings.CT_CBZ_OVERWRITE %}checked{% endif %}>
                             Overwrite existing metadata tags
+                            <button type="button" class="info-btn" data-title="Overwrite Existing Tags" data-desc="Replaces any pre-existing XML metadata inside the comic book file with fresh details." data-impact="Ensures files contain uniform metadata matching your database.">i</button>
                         </label>
                     </div>
                 </div>
@@ -686,12 +817,14 @@
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="CT_TAG_CR" name="CT_TAG_CR" {% if settings.CT_TAG_CR %}checked{% endif %}>
                             Write ComicRack tag schema
+                            <button type="button" class="info-btn" data-title="ComicRack Schema" data-desc="Embeds tags in ComicRack XML schema format (ComicBookInfo/ComicInfo.xml)." data-impact="Supported by major reading applications like Panels, Chunky, and ComicRack.">i</button>
                         </label>
                     </div>
                     <div class="form-group">
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="CT_TAG_CBL" name="CT_TAG_CBL" {% if settings.CT_TAG_CBL %}checked{% endif %}>
                             Write ComicBookLover tag schema
+                            <button type="button" class="info-btn" data-title="ComicBookLover Schema" data-desc="Embeds tags in ComicBookLover plist format schemas." data-impact="Supported by legacy iOS/macOS comic readers.">i</button>
                         </label>
                     </div>
                 </div>
@@ -701,12 +834,14 @@
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="CMTAG_VOLUME" name="CMTAG_VOLUME" {% if settings.CMTAG_VOLUME %}checked{% endif %}>
                             Write Volume tag field
+                            <button type="button" class="info-btn" data-title="Write Volume Tag" data-desc="Enables writing volume fields to file metadata tags." data-impact="Allows readers to group separate series volumes correctly.">i</button>
                         </label>
                     </div>
                     <div class="form-group">
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="CMTAG_START_YEAR_AS_VOLUME" name="CMTAG_START_YEAR_AS_VOLUME" {% if settings.CMTAG_START_YEAR_AS_VOLUME %}checked{% endif %}>
                             Use Start Year as Volume
+                            <button type="button" class="info-btn" data-title="Start Year as Volume" data-desc="Substitutes the series launch/start year as the Volume number inside tags." data-impact="Useful for readers that lack separate year filters.">i</button>
                         </label>
                     </div>
                 </div>
@@ -716,29 +851,40 @@
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="SETDEFAULTVOLUME" name="SETDEFAULTVOLUME" {% if settings.SETDEFAULTVOLUME %}checked{% endif %}>
                             Set Default Volume field
+                            <button type="button" class="info-btn" data-title="Set Default Volume" data-desc="Sets the default volume value to 1 if no volume exists on ComicVine." data-impact="Ensures tags always contain a volume number.">i</button>
                         </label>
                     </div>
                     <div class="form-group">
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="CV_BATCH_LIMIT_PROTECTION" name="CV_BATCH_LIMIT_PROTECTION" {% if settings.CV_BATCH_LIMIT_PROTECTION %}checked{% endif %}>
                             ComicVine Batch Limit Protection
+                            <button type="button" class="info-btn" data-title="Batch Limit Protection" data-desc="Limits the maximum number of items scanned in a single queue to protect against API key lockouts." data-impact="Prevents exceeding daily metadata request counts.">i</button>
                         </label>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="CV_BATCH_LIMIT_THRESHOLD">CV Batch Threshold</label>
+                        <label class="form-label" for="CV_BATCH_LIMIT_THRESHOLD">
+                            CV Batch Threshold
+                            <button type="button" class="info-btn" data-title="Batch Limit Threshold" data-desc="The threshold count of items allowed in a single metadata update batch scan." data-impact="Batches larger than this value are split across multiple sync windows.">i</button>
+                        </label>
                         <input class="form-input" type="number" id="CV_BATCH_LIMIT_THRESHOLD" name="CV_BATCH_LIMIT_THRESHOLD" value="{{ settings.CV_BATCH_LIMIT_THRESHOLD }}">
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="CT_NOTES_FORMAT">Metatag Notes Format</label>
+                        <label class="form-label" for="CT_NOTES_FORMAT">
+                            Metatag Notes Format
+                            <button type="button" class="info-btn" data-title="Metatag Notes Format" data-desc="Template format for information written inside the 'Notes' tag field (defaults to Issue ID)." data-impact="Helps trace issues back to central database indices.">i</button>
+                        </label>
                         <input class="form-input" type="text" id="CT_NOTES_FORMAT" name="CT_NOTES_FORMAT" value="{{ settings.CT_NOTES_FORMAT }}">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="UNRAR_CMD">Unrar Path Command</label>
+                    <label class="form-label" for="UNRAR_CMD">
+                        Unrar Path Command
+                        <button type="button" class="info-btn" data-title="Unrar Command Path" data-desc="The absolute path or shell command string for invoking the unrar binary." data-impact="Necessary to extract files from CBR formats before converting to CBZ.">i</button>
+                    </label>
                     <input class="form-input" type="text" id="UNRAR_CMD" name="UNRAR_CMD" value="{{ settings.UNRAR_CMD }}" placeholder="unrar">
                 </div>
             </div>
@@ -751,7 +897,10 @@
                 </p>
 
                 <div class="form-group" style="margin-bottom: 2rem;">
-                    <label class="form-label" for="WEEKLY_PULL_PROXY_URL">Weekly Pull Proxy URL</label>
+                    <label class="form-label" for="WEEKLY_PULL_PROXY_URL">
+                        Weekly Pull Proxy URL
+                        <button type="button" class="info-btn" data-title="Weekly Pull Proxy URL" data-desc="The proxy API endpoint used to query weekly new comic releases from League of Comic Geeks (Diamond distribution listings)." data-impact="Essential to load pull lists dynamically without getting IP-blocked by LOCG.">i</button>
+                    </label>
                     <div style="display: flex; gap: 1rem; align-items: center;">
                         <input class="form-input" type="url" id="WEEKLY_PULL_PROXY_URL" name="WEEKLY_PULL_PROXY_URL" value="{{ settings.WEEKLY_PULL_PROXY_URL }}" style="flex-grow: 1;">
                         <button type="button" class="btn btn-secondary btn-sm"
@@ -769,7 +918,10 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="ALT_PULL">Alt Pull Mode</label>
+                        <label class="form-label" for="ALT_PULL">
+                            Alt Pull Mode
+                            <button type="button" class="info-btn" data-title="Alt Pull Mode" data-desc="Controls alternate parsing schemas for the Diamond pulls scanner list." data-impact="Adjusts metadata detection logic on proxy feeds. Keep as default.">i</button>
+                        </label>
                         <input class="form-input" type="number" id="ALT_PULL" name="ALT_PULL" value="{{ settings.ALT_PULL }}">
                     </div>
                     <div class="form-group">
@@ -783,12 +935,14 @@
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="AUTO_MASS_ADD" name="AUTO_MASS_ADD" {% if settings.AUTO_MASS_ADD %}checked{% endif %}>
                             Auto Add Mass Publishers
+                            <button type="button" class="info-btn" data-title="Auto Add Publishers" data-desc="Automatically adds any new series by major publishers (Marvel, DC, etc.) to your watchlist when they appear on the weekly pull list." data-impact="Highly automated onboarding of new series.">i</button>
                         </label>
                     </div>
                     <div class="form-group">
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="PACK_0DAY_WATCHLIST_ONLY" name="PACK_0DAY_WATCHLIST_ONLY" {% if settings.PACK_0DAY_WATCHLIST_ONLY %}checked{% endif %}>
                             0-Day Pack Watchlist Only
+                            <button type="button" class="info-btn" data-title="0-Day Pack Limit" data-desc="Restricts matching items inside major 0-day release packs strictly to series already in your watchlist." data-impact="Prevents downloading huge unneeded packs.">i</button>
                         </label>
                     </div>
                 </div>
@@ -798,12 +952,14 @@
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="RESET_PULLIST_PAGINATION" name="RESET_PULLIST_PAGINATION" {% if settings.RESET_PULLIST_PAGINATION %}checked{% endif %}>
                             Reset Pullist Pagination
+                            <button type="button" class="info-btn" data-title="Reset Pagination" data-desc="Resets pagination cursors and search cache states when loading different weekly pull list weeks." data-impact="Ensures search results start from page 1.">i</button>
                         </label>
                     </div>
                     <div class="form-group">
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="WEEKFOLDER" name="WEEKFOLDER" {% if settings.WEEKFOLDER %}checked{% endif %}>
                             Create Weekly Folders
+                            <button type="button" class="info-btn" data-title="Weekly Folders" data-desc="Groups downloaded pulls into date-specific weekly folders (e.g. 'Week 23')." data-impact="Helps segregate issues by release week rather than series directory.">i</button>
                         </label>
                     </div>
                 </div>
@@ -821,17 +977,26 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="BIGGIE_PUB">Big Publishers Threshold</label>
+                        <label class="form-label" for="BIGGIE_PUB">
+                            Big Publishers Threshold
+                            <button type="button" class="info-btn" data-title="Big Publishers Limit" data-desc="The minimum number of issues or ranking score identifying a company as a major publisher." data-impact="Categorizes catalog imports into main versus independent tabs.">i</button>
+                        </label>
                         <input class="form-input" type="number" id="BIGGIE_PUB" name="BIGGIE_PUB" value="{{ settings.BIGGIE_PUB }}">
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="INDIE_PUB">Indie Publishers Threshold</label>
+                        <label class="form-label" for="INDIE_PUB">
+                            Indie Publishers Threshold
+                            <button type="button" class="info-btn" data-title="Indie Publishers Limit" data-desc="The threshold count/rank determining independent publisher categorizations." data-impact="Used to organize search filters in the UI.">i</button>
+                        </label>
                         <input class="form-input" type="number" id="INDIE_PUB" name="INDIE_PUB" value="{{ settings.INDIE_PUB }}">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="MASS_PUBLISHERS">Mass Publishers List</label>
+                    <label class="form-label" for="MASS_PUBLISHERS">
+                        Mass Publishers List
+                        <button type="button" class="info-btn" data-title="Mass Publishers List" data-desc="A comma-separated list of publisher names targeted for the Auto Add feature." data-impact="Filters which publishers are processed automatically.">i</button>
+                    </label>
                     <textarea class="form-input" id="MASS_PUBLISHERS" name="MASS_PUBLISHERS" rows="2" placeholder="marvel, dc, image">{{ settings.MASS_PUBLISHERS }}</textarea>
                 </div>
 
@@ -842,12 +1007,14 @@
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="STORYARCDIR" name="STORYARCDIR" {% if settings.STORYARCDIR %}checked{% endif %}>
                             Create Story Arc Directories
+                            <button type="button" class="info-btn" data-title="Story Arc Folders" data-desc="Toggles creating separate directories on disk for story arcs / crossover reading lists." data-impact="Groups issues of different series into a unified story directory structure.">i</button>
                         </label>
                     </div>
                     <div class="form-group">
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="COPY2ARCDIR" name="COPY2ARCDIR" {% if settings.COPY2ARCDIR %}checked{% endif %}>
                             Copy Issues to Arc Directory
+                            <button type="button" class="info-btn" data-title="Copy to Arc Directory" data-desc="Copies the comic files into the story arc directory instead of moving them, maintaining the primary series folder." data-impact="Maintains clean series folders but duplicates file disk space.">i</button>
                         </label>
                     </div>
                 </div>
@@ -857,30 +1024,41 @@
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="SEARCH_STORYARCS" name="SEARCH_STORYARCS" {% if settings.SEARCH_STORYARCS %}checked{% endif %}>
                             Search Story Arcs
+                            <button type="button" class="info-btn" data-title="Search Story Arcs" data-desc="Enables automatic search scans for wanted issues belonging to active reading lists / story arcs." data-impact="Automates snatching multi-series story events.">i</button>
                         </label>
                     </div>
                     <div class="form-group">
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="UPCOMING_STORYARCS" name="UPCOMING_STORYARCS" {% if settings.UPCOMING_STORYARCS %}checked{% endif %}>
                             Watch Upcoming Story Arcs
+                            <button type="button" class="info-btn" data-title="Watch Upcoming Arcs" data-desc="Enables querying upcoming story arc catalogs to auto-add new crossover series to watchlist." data-impact="Simplifies monitoring crossover event series.">i</button>
                         </label>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="STORYARC_LOCATION">Story Arc Storage Location</label>
+                        <label class="form-label" for="STORYARC_LOCATION">
+                            Story Arc Storage Location
+                            <button type="button" class="info-btn" data-title="Arc Storage Path" data-desc="The path where story arc folders are created." data-impact="Leave blank to create story arc directories inside your Destination folder root.">i</button>
+                        </label>
                         <input class="form-input" type="text" id="STORYARC_LOCATION" name="STORYARC_LOCATION" value="{{ settings.STORYARC_LOCATION }}">
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="ARC_FOLDERFORMAT">Arc Folder Name Format</label>
+                        <label class="form-label" for="ARC_FOLDERFORMAT">
+                            Arc Folder Name Format
+                            <button type="button" class="info-btn" data-title="Arc Folder Naming Schema" data-desc="Pattern template used when renaming story arc folders." data-impact="Supports variables: $arc, $spanyears.">i</button>
+                        </label>
                         <input class="form-input" type="text" id="ARC_FOLDERFORMAT" name="ARC_FOLDERFORMAT" value="{{ settings.ARC_FOLDERFORMAT }}">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="ARC_FILEOPS">Arc File Operation</label>
+                        <label class="form-label" for="ARC_FILEOPS">
+                            Arc File Operation
+                            <button type="button" class="info-btn" data-title="Arc File Action" data-desc="The file operation method used when organizing story arcs." data-impact="Choose Copy, Move, or Symlink (creates links pointing to the main files).">i</button>
+                        </label>
                         <select class="form-input" id="ARC_FILEOPS" name="ARC_FILEOPS">
                             <option value="copy" {% if settings.ARC_FILEOPS == 'copy' %}selected{% endif %}>Copy (Duplicate)</option>
                             <option value="move" {% if settings.ARC_FILEOPS == 'move' %}selected{% endif %}>Move (Relocate)</option>
@@ -891,6 +1069,7 @@
                         <label class="form-checkbox-label" style="margin-top: 1.8rem;">
                             <input class="form-checkbox" type="checkbox" id="ARC_FILEOPS_SOFTLINK_RELATIVE" name="ARC_FILEOPS_SOFTLINK_RELATIVE" {% if settings.ARC_FILEOPS_SOFTLINK_RELATIVE %}checked{% endif %}>
                             Relative Symlinks
+                            <button type="button" class="info-btn" data-title="Relative Links" data-desc="Uses relative folder path references instead of absolute targets when creating symlinks." data-impact="Ensures links remain functional if the storage mounts move.">i</button>
                         </label>
                     </div>
                 </div>
@@ -908,12 +1087,14 @@
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="ENABLE_DDL" name="ENABLE_DDL" {% if settings.ENABLE_DDL %}checked{% endif %}>
                             Enable Direct Downloads (DDL)
+                            <button type="button" class="info-btn" data-title="Direct Downloads (DDL)" data-desc="Toggles DDL crawling routines as a fallback when Usenet and Torrents fail to locate wanted releases." data-impact="Enables submitting matches directly to browsers or JDownloader.">i</button>
                         </label>
                     </div>
                     <div class="form-group">
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="ENABLE_GETCOMICS" name="ENABLE_GETCOMICS" {% if settings.ENABLE_GETCOMICS %}checked{% endif %}>
                             Enable GetComics Provider
+                            <button type="button" class="info-btn" data-title="GetComics Provider" data-desc="Enables crawling GetComics.org database posts for matched releases." data-impact="Provides a database of digital and print scans.">i</button>
                         </label>
                     </div>
                 </div>
@@ -923,29 +1104,40 @@
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="DDL_AUTORESUME" name="DDL_AUTORESUME" {% if settings.DDL_AUTORESUME %}checked{% endif %}>
                             Auto Resume Interrupted Downloads
+                            <button type="button" class="info-btn" data-title="Auto Resume" data-desc="Enables automatic retries on interrupted network socket downloads." data-impact="Ensures larger downloads finish despite spotty proxy links.">i</button>
                         </label>
                     </div>
                     <div class="form-group">
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="DDL_PREFER_UPSCALED" name="DDL_PREFER_UPSCALED" {% if settings.DDL_PREFER_UPSCALED %}checked{% endif %}>
                             Prefer Upscaled Comic Scans
+                            <button type="button" class="info-btn" data-title="Prefer Upscaled" data-desc="Favors high-resolution or upscaled/digital-deluxe scans when crawl returns multiple options." data-impact="Attempts to fetch the absolute best quality scan.">i</button>
                         </label>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="DDL_LOCATION">DDL Downloads Temp Directory</label>
+                        <label class="form-label" for="DDL_LOCATION">
+                            DDL Downloads Temp Directory
+                            <button type="button" class="info-btn" data-title="DDL Storage Path" data-desc="The temporary directory where HTTP downloads are cached during transfers." data-impact="Leave blank to use internal Cache directory.">i</button>
+                        </label>
                         <input class="form-input" type="text" id="DDL_LOCATION" name="DDL_LOCATION" value="{{ settings.DDL_LOCATION }}">
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="DDL_QUERY_DELAY">DDL Query Delay (Seconds)</label>
+                        <label class="form-label" for="DDL_QUERY_DELAY">
+                            DDL Query Delay (Seconds)
+                            <button type="button" class="info-btn" data-title="DDL Scrape Delay" data-desc="Delay in seconds between DDL provider page index requests." data-impact="Higher delays prevent getting your IP address banned by Cloudflare/DDL mirrors.">i</button>
+                        </label>
                         <input class="form-input" type="number" id="DDL_QUERY_DELAY" name="DDL_QUERY_DELAY" value="{{ settings.DDL_QUERY_DELAY }}">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="DDL_PRIORITY_ORDER">DDL Hosters Priority (JSON list)</label>
+                    <label class="form-label" for="DDL_PRIORITY_ORDER">
+                        DDL Hosters Priority (JSON list)
+                        <button type="button" class="info-btn" data-title="DDL Hoster Priority" data-desc="JSON array specifying order of file lockers to prefer (e.g. Mediafire, Mega, Pixeldrain)." data-impact="Favors hosters that allow free direct links with high speeds.">i</button>
+                    </label>
                     <input class="form-input" type="text" id="DDL_PRIORITY_ORDER" name="DDL_PRIORITY_ORDER" value="{{ settings.DDL_PRIORITY_ORDER }}">
                 </div>
 
@@ -956,10 +1148,14 @@
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="ENABLE_FLARESOLVERR" name="ENABLE_FLARESOLVERR" {% if settings.ENABLE_FLARESOLVERR %}checked{% endif %}>
                             Enable FlareSolverr
+                            <button type="button" class="info-btn" data-title="Enable FlareSolverr" data-desc="Toggles bypassing Cloudflare JS challenges using a FlareSolverr service." data-impact="Required for parsing sites that employ high Cloudflare DDoS protection layers.">i</button>
                         </label>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="FLARESOLVERR_URL">FlareSolverr API URL</label>
+                        <label class="form-label" for="FLARESOLVERR_URL">
+                            FlareSolverr API URL
+                            <button type="button" class="info-btn" data-title="FlareSolverr API Address" data-desc="The URL of your running FlareSolverr container (e.g. http://localhost:8191/v1)." data-impact="Used by DDL service to fetch pages requiring browser verification.">i</button>
+                        </label>
                         <div style="display: flex; gap: 1rem; align-items: center;">
                             <input class="form-input" type="url" id="FLARESOLVERR_URL" name="FLARESOLVERR_URL" value="{{ settings.FLARESOLVERR_URL }}" placeholder="http://localhost:8191/v1" style="flex-grow: 1;">
                             <button type="button" class="btn btn-secondary btn-sm"
@@ -981,6 +1177,7 @@
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="ENABLE_PROXY" name="ENABLE_PROXY" {% if settings.ENABLE_PROXY %}checked{% endif %}>
                             Enable Proxy for DDL Scraper
+                            <button type="button" class="info-btn" data-title="Enable Scraper Proxy" data-desc="Toggles routing direct download link crawler traffic through an HTTP/HTTPS proxy." data-impact="Useful if your local IP is geo-blocked by GetComics or storage locker mirrors.">i</button>
                         </label>
                     </div>
                     <div class="form-group">
@@ -1000,19 +1197,24 @@
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="ENABLE_EXTERNAL_SERVER" name="ENABLE_EXTERNAL_SERVER" {% if settings.ENABLE_EXTERNAL_SERVER %}checked{% endif %}>
                             Enable External Content Server
+                            <button type="button" class="info-btn" data-title="External Server" data-desc="Toggles connecting to a secondary external index or catalog server to query links." data-impact="Provides alternative source directories if primary trackers lack the issues.">i</button>
                         </label>
                     </div>
                     <div class="form-group">
                         <label class="form-checkbox-label">
                             <input class="form-checkbox" type="checkbox" id="PACK_PRIORITY" name="PACK_PRIORITY" {% if settings.PACK_PRIORITY %}checked{% endif %}>
                             Pack Priority snatching
+                            <button type="button" class="info-btn" data-title="Pack Priority" data-desc="Favors complete volume or story packs over individual issue listings when fetching DDL options." data-impact="Downloads entire story runs at once if available.">i</button>
                         </label>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="EXTERNAL_SERVER">External Server Host URL</label>
+                        <label class="form-label" for="EXTERNAL_SERVER">
+                            External Server Host URL
+                            <button type="button" class="info-btn" data-title="External Server Host" data-desc="The base Web API URL of your external content mirror." data-impact="Used to search and fetch file links dynamically.">i</button>
+                        </label>
                         <input class="form-input" type="url" id="EXTERNAL_SERVER" name="EXTERNAL_SERVER" value="{{ settings.EXTERNAL_SERVER }}">
                     </div>
                     <div class="form-group">
@@ -1041,10 +1243,14 @@
                         <label class="form-checkbox-label" style="margin-top: 1.8rem;">
                             <input class="form-checkbox" type="checkbox" id="JD2_ENABLE" name="JD2_ENABLE" {% if settings.JD2_ENABLE %}checked{% endif %}>
                             Enable JDownloader 2 Integration
+                            <button type="button" class="info-btn" data-title="JDownloader 2" data-desc="Toggles automatic dispatching of scraped direct download URLs to a running JDownloader 2 instance." data-impact="Automates package grabs; requires your local JDownloader API server to be accessible.">i</button>
                         </label>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="JD2_URL">JD2 API Endpoint URL</label>
+                        <label class="form-label" for="JD2_URL">
+                            JD2 API Endpoint URL
+                            <button type="button" class="info-btn" data-title="JDownloader API URL" data-desc="The local API URL endpoint for the JDownloader 2 client (e.g. http://localhost:10101)." data-impact="Used to push links to the JDownloader queue.">i</button>
+                        </label>
                         <div style="display: flex; gap: 1rem; align-items: center;">
                             <input class="form-input" type="url" id="JD2_URL" name="JD2_URL" value="{{ settings.JD2_URL }}" style="flex-grow: 1;">
                             <button type="button" class="btn btn-secondary btn-sm"
@@ -1060,7 +1266,10 @@
                         <div id="jd2-test-result" style="margin-top: 0.75rem; min-height: 20px;"></div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="JD2_DEST_DIR">JD2 Destination Folder Override</label>
+                        <label class="form-label" for="JD2_DEST_DIR">
+                            JD2 Destination Folder Override
+                            <button type="button" class="info-btn" data-title="JDownloader Dest Folder" data-desc="Sets a specific destination download folder path on the JDownloader host machine for comic grabs." data-impact="Overrides the default downloads folder of the JD2 client.">i</button>
+                        </label>
                         <input class="form-input" type="text" id="JD2_DEST_DIR" name="JD2_DEST_DIR" value="{{ settings.JD2_DEST_DIR }}">
                     </div>
                 </div>
@@ -1167,6 +1376,9 @@
 <div id="toast" class="toast">
     <span id="toast-message"></span>
 </div>
+
+<!-- Floating Tooltip Container -->
+<div id="settings-tooltip" class="settings-tooltip"></div>
 
 <script>
     // Tab switching logic
@@ -1341,5 +1553,107 @@
     document.body.addEventListener('show-toast', function(evt) {
         showToast(evt.detail.message, evt.detail.type);
     });
+
+    // Settings Tooltips Logic
+    (function() {
+        const tooltip = document.getElementById('settings-tooltip');
+        let pinnedTarget = null;
+
+        function showTooltip(target) {
+            const title = target.getAttribute('data-title') || '';
+            const desc = target.getAttribute('data-desc') || '';
+            const impact = target.getAttribute('data-impact') || '';
+            
+            let html = `<div class="settings-tooltip-title">${title}</div>`;
+            html += `<div class="settings-tooltip-desc">${desc}</div>`;
+            if (impact) {
+                html += `<div class="settings-tooltip-impact"><strong>Impact:</strong> ${impact}</div>`;
+            }
+            
+            tooltip.innerHTML = html;
+            tooltip.classList.add('show');
+            
+            // Position the tooltip dynamically
+            const rect = target.getBoundingClientRect();
+            
+            // Temporarily set display: block to get real height
+            tooltip.style.display = 'block';
+            const tooltipRect = tooltip.getBoundingClientRect();
+            tooltip.style.display = ''; // revert display
+            
+            // Center horizontally relative to target button
+            let left = rect.left + window.pageXOffset + (rect.width / 2) - (tooltipRect.width / 2);
+            // Position above the target button
+            let top = rect.top + window.pageYOffset - tooltipRect.height - 8;
+            
+            // Boundary check: horizontal constraints
+            if (left < 10) left = 10;
+            if (left + tooltipRect.width > window.innerWidth - 10) {
+                left = window.innerWidth - tooltipRect.width - 10;
+            }
+            
+            // Boundary check: vertical constraints (if it clips off the top, position below)
+            if (rect.top - tooltipRect.height - 8 < 10) {
+                top = rect.bottom + window.pageYOffset + 8;
+            }
+            
+            tooltip.style.left = left + 'px';
+            tooltip.style.top = top + 'px';
+        }
+
+        function hideTooltip() {
+            tooltip.classList.remove('show');
+        }
+
+        // Initialize event listeners on active elements
+        function initTooltipEvents() {
+            document.querySelectorAll('.info-btn').forEach(btn => {
+                // Prevent duplicate listeners if this is called multiple times
+                if (btn.dataset.tooltipsBound) return;
+                btn.dataset.tooltipsBound = "true";
+
+                btn.addEventListener('mouseenter', function(e) {
+                    if (pinnedTarget) return; // Skip hover if a tooltip is pinned
+                    showTooltip(e.currentTarget);
+                });
+                
+                btn.addEventListener('mouseleave', function(e) {
+                    if (pinnedTarget) return;
+                    hideTooltip();
+                });
+                
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    
+                    if (pinnedTarget === btn) {
+                        pinnedTarget = null;
+                        btn.classList.remove('active');
+                        hideTooltip();
+                    } else {
+                        if (pinnedTarget) {
+                            pinnedTarget.classList.remove('active');
+                        }
+                        pinnedTarget = btn;
+                        btn.classList.add('active');
+                        showTooltip(btn);
+                    }
+                });
+            });
+        }
+
+        // Close pinned tooltips when clicking anywhere else
+        document.addEventListener('click', function(e) {
+            if (pinnedTarget && !e.target.closest('#settings-tooltip') && !e.target.closest('.info-btn')) {
+                pinnedTarget.classList.remove('active');
+                pinnedTarget = null;
+                hideTooltip();
+            }
+        });
+
+        // Initialize on DOM load and when HTMX finishes swapping content
+        document.addEventListener('DOMContentLoaded', initTooltipEvents);
+        document.body.addEventListener('htmx:afterSwap', initTooltipEvents);
+    })();
 </script>
 {% endblock %}
