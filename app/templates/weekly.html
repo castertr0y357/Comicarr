@@ -49,14 +49,31 @@
     {% for release in releases %}
     <div style="background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 10px; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; transition: border-color 0.2s ease, transform 0.2s ease;">
         <div>
-            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; flex-wrap: wrap;">
                 <span class="badge" style="font-size: 0.7rem; text-transform: uppercase; background-color: rgba(148, 163, 184, 0.1); color: var(--text-secondary); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600; border: 1px solid var(--border-color);">{{ release.publisher }}</span>
                 {% if release.format %}
                 <span class="badge" style="font-size: 0.65rem; background-color: rgba(6, 182, 212, 0.1); color: var(--accent-cyan); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600;">{{ release.format }}</span>
                 {% endif %}
+                {% if release.annuallink %}
+                <a href="{{ release.annuallink }}" target="_blank" class="badge" style="font-size: 0.65rem; background-color: rgba(6, 182, 212, 0.05); color: var(--text-secondary); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600; border: 1px solid var(--border-color); text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem; transition: background-color 0.2s, color 0.2s;" onmouseover="this.style.backgroundColor='rgba(6, 182, 212, 0.15)'; this.style.color='var(--accent-cyan)'" onmouseout="this.style.backgroundColor='rgba(6, 182, 212, 0.05)'; this.style.color='var(--text-secondary)'">
+                    <span>LOCG</span>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                </a>
+                {% endif %}
+                {% if release.comic_id %}
+                <a href="https://comicvine.gamespot.com/volume/4050-{{ release.comic_id }}/" target="_blank" class="badge" style="font-size: 0.65rem; background-color: rgba(16, 185, 129, 0.05); color: var(--text-secondary); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600; border: 1px solid var(--border-color); text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem; transition: background-color 0.2s, color 0.2s;" onmouseover="this.style.backgroundColor='rgba(16, 185, 129, 0.15)'; this.style.color='var(--accent-emerald)'" onmouseout="this.style.backgroundColor='rgba(16, 185, 129, 0.05)'; this.style.color='var(--text-secondary)'">
+                    <span>ComicVine</span>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                </a>
+                {% endif %}
             </div>
             <h3 style="font-size: 1.05rem; font-weight: 600; margin: 0; color: var(--text-primary);">
-                {{ release.comic }} #{{ release.issue }}
+                {% if release.status == 'Wanted' and release.comic_id %}
+                    <a href="/comics/{{ release.comic_id }}" style="color: var(--accent-cyan); text-decoration: none; border-bottom: 1px dashed transparent; transition: border-color 0.2s;" onmouseover="this.style.borderColor='var(--accent-cyan)'" onmouseout="this.style.borderColor='transparent'">{{ release.comic }}</a>
+                {% else %}
+                    {{ release.comic }}
+                {% endif %}
+                <span style="color: var(--text-muted); font-size: 0.95rem; font-weight: 500; margin-left: 0.25rem;">#{{ release.issue }}</span>
             </h3>
             {% if release.extra and release.extra != release.format %}
             <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">{{ release.extra }}</p>
