@@ -29,6 +29,8 @@ class WeeklyPullService:
         today = datetime.date.today()
         # %U: Week number of the year (Sunday as the first day of the week)
         weeknumber = int(today.strftime("%U"))
+        if weeknumber == 0:
+            weeknumber = 1
         year = today.year
         return {"week": weeknumber, "year": year}
 

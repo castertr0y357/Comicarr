@@ -61,6 +61,11 @@ This file tracks the current features, environment status, and pending/completed
     - Added background POST request trigger (`hx-trigger="load"`) and refreshing indicator banner (`#refresh-indicator`) in `weekly.html`.
     - Fixed positional argument bug in the `/api/weekly/sync` callback routing where the session dependency was incorrectly mapped to the `sync_failed` flag.
     - Added unit and integration tests in `tests/test_routes.py` verifying non-blocking loader, cached-data sync triggers, and HTMX loop prevention.
+  - Fixed Week 0 weekly releases calculation bug:
+    - Mapped Week 0 defaults to Week 1 across `app/routers/web.py`, `app/routers/api.py`, and `app/services/weekly_pull.py`.
+    - Rewrote week navigation bounds-checking logic to dynamically find the correct maximum week of any given year (52 or 53 weeks) using python datetime.
+    - Updated navigation wrapping to transition cleanly from the final week of a year to Week 1 of the next, and from Week 1 to the final week of the prior year, eliminating Week 0.
+    - Added boundary navigation test cases in `tests/test_routes.py`.
 
 
 

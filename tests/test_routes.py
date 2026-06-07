@@ -414,5 +414,33 @@ async def test_read_weekly_releases_htmx_prevents_auto_sync(mock_service_class, 
     mock_service_class.assert_not_called()
 
 
+@pytest.mark.asyncio
+async def test_read_weekly_releases_boundaries(client):
+    # Test year boundaries for Week 52 of 2026:
+    # Dec 31, 2026 is week 52 under %U format, so max_week is 52.
+    # The next week should wrap to Week 1 of 2027.
+    # The previous week should be Week 51 of 2026.
+    response = await client.get("/weekly?week=52&year=2026")
+    assert response.status_code == 200
+    assert "/weekly?week=51&amp;year=2026" in response.text or "/weekly?week=51&year=2026" in response.text
+    assert "/weekly?week=1&amp;year=2027" in response.text or "/weekly?week=1&year=2027" in response.text
+
+    # Test year boundaries for Week 1 of 2026:
+    # The previous week should wrap to the last week of 2025 (Week 52).
+    # The next week should be Week 2 of 2026.
+    response = await client.get("/weekly?week=1&year=2026")
+    assert response.status_code == 200
+    assert "/weekly?week=52&amp;year=2025" in response.text or "/weekly?week=52&year=2025" in response.text
+    assert "/weekly?week=2&amp;year=2026" in response.text or "/weekly?week=2&year=2026" in response.text
+
+    # Test year boundaries for Week 53 of 2023:
+    # Dec 31, 2023 was a Sunday, so max_week was 53.
+    # Next week from Week 53 of 2023 should wrap to Week 1 of 2024.
+    response = await client.get("/weekly?week=53&year=2023")
+    assert response.status_code == 200
+    assert "/weekly?week=1&amp;year=2024" in response.text or "/weekly?week=1&year=2024" in response.text
+
+
+
 
 

@@ -126,20 +126,36 @@ async def read_weekly_releases(
         today = datetime.date.today()
         if week is None:
             week = int(today.strftime("%U"))
+            if week == 0:
+                week = 1
         if year is None:
             year = today.year
             
-    # Calculate previous and next week boundaries
+    # Calculate previous and next week boundaries without Week 0
     prev_week = week - 1
     prev_year = year
-    if prev_week < 0:
-        prev_week = 52
+    if prev_week < 1:
         prev_year -= 1
+        # Find the max week number of the previous year
+        try:
+            prev_week = int(datetime.date(prev_year, 12, 31).strftime("%U"))
+            if prev_week == 0:
+                prev_week = 52
+        except Exception:
+            prev_week = 52
         
     next_week = week + 1
     next_year = year
-    if next_week > 52:
-        next_week = 0
+    # Find the max week number of the current year
+    try:
+        max_week = int(datetime.date(year, 12, 31).strftime("%U"))
+        if max_week == 0:
+            max_week = 52
+    except Exception:
+        max_week = 52
+
+    if next_week > max_week:
+        next_week = 1
         next_year += 1
 
     # Fetch weekly releases

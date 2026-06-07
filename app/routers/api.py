@@ -317,6 +317,8 @@ async def sync_weekly_releases(
         today = datetime.date.today()
         if week is None:
             week = int(today.strftime("%U"))
+            if week == 0:
+                week = 1
         if year is None:
             year = today.year
             
@@ -555,6 +557,8 @@ async def api_test_weekly_pull_proxy(
     try:
         today = datetime.date.today()
         weeknumber = int(today.strftime("%U"))
+        if weeknumber == 0:
+            weeknumber = 1
         year = today.year
         
         async with httpx.AsyncClient(verify=settings.CV_VERIFY, timeout=15.0) as client:
