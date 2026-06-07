@@ -143,6 +143,22 @@ async def read_weekly_releases(
     res = await session.execute(stmt)
     releases = res.scalars().all()
     
+    # If no releases are cached for this week, automatically fetch and sync them
+    if not releases:
+        from app.services.weekly_pull import WeeklyPullService
+        from app.core.logger import logger
+        service = WeeklyPullService(session)
+        try:
+            logger.info(f"[WeeklyPull] Auto-fetching releases for week {week}, year {year}...")
+            sync_res = await service.fetch_and_sync(week, year)
+            if sync_res.get("status") == "success":
+                res = await session.execute(stmt)
+                releases = res.scalars().all()
+        except Exception as e:
+            logger.error(f"[WeeklyPull] Auto-fetch failed: {e}")
+        finally:
+            await service.close()
+    
     # Extract unique publishers
     publishers = sorted(list(set(r.publisher for r in releases if r.publisher)))
     

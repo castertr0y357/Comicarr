@@ -9,6 +9,7 @@ from app.main import app
 from app.core.db import engine, init_db, get_session
 from app.models.comic import Comic
 from app.models.issue import Issue
+from app.models.weekly import WeeklyPullList
 from app.services.cv_api import CVVolume, CVPublisherRef, CVImage
 
 @pytest_asyncio.fixture(scope="function")
@@ -22,6 +23,7 @@ async def db_session():
         # Cleanup database tables after each test run
         await session.execute(delete(Issue))
         await session.execute(delete(Comic))
+        await session.execute(delete(WeeklyPullList))
         await session.commit()
     # Close connection pool to prevent event loop issues
     await engine.dispose()
@@ -317,4 +319,59 @@ async def test_sync_weekly_releases_route(mock_service_class, client, db_session
     assert "Week 24 (2026)" in response.text
     mock_service.fetch_and_sync.assert_called_once_with(24, 2026)
     mock_service.close.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_read_weekly_releases_with_cached_data(client, db_session):
+    from app.models.weekly import WeeklyPullList
+    record = WeeklyPullList(
+        shipdate="2026-06-10",
+        publisher="Marvel",
+        issue="1",
+        comic="Spider-Man",
+        status="Skipped",
+        weeknumber=24,
+        year=2026
+    )
+    db_session.add(record)
+    await db_session.commit()
+
+    with patch("app.services.weekly_pull.WeeklyPullService") as mock_service_class:
+        response = await client.get("/weekly?week=24&year=2026")
+        assert response.status_code == 200
+        assert "Spider-Man" in response.text
+        assert "Week 24 (2026)" in response.text
+        mock_service_class.assert_not_called()
+
+
+@pytest.mark.asyncio
+@patch("app.services.weekly_pull.WeeklyPullService")
+async def test_read_weekly_releases_empty_auto_sync(mock_service_class, client, db_session):
+    mock_service = AsyncMock()
+    mock_service_class.return_value = mock_service
+    
+    async def mock_fetch(week, year):
+        from app.models.weekly import WeeklyPullList
+        record = WeeklyPullList(
+            shipdate="2026-06-10",
+            publisher="DC Comics",
+            issue="50",
+            comic="Batman",
+            status="Wanted",
+            weeknumber=24,
+            year=2026
+        )
+        db_session.add(record)
+        await db_session.commit()
+        return {"status": "success"}
+        
+    mock_service.fetch_and_sync = mock_fetch
+    mock_service.close = AsyncMock()
+
+    response = await client.get("/weekly?week=24&year=2026")
+    assert response.status_code == 200
+    assert "Batman" in response.text
+    assert "Week 24 (2026)" in response.text
+    mock_service.close.assert_called_once()
+
 
