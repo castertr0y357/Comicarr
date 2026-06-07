@@ -30,7 +30,7 @@
     <div style="display: flex; align-items: center; gap: 1rem;">
         <button class="btn btn-primary"
                 hx-post="/api/weekly/sync"
-                hx-vals='{"week": {{ week }}, "year": {{ year }}}'
+                hx-vals='{"week": {{ week }}, "year": {{ year }}{% if selected_pub %}, "publisher": "{{ selected_pub }}"{% endif %}}'
                 hx-target="body"
                 hx-indicator="#sync-indicator"
                 style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600; padding: 0.6rem 1.2rem; cursor: pointer;">
@@ -90,7 +90,7 @@
         <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">Download the latest releases list from the League of Comic Geeks proxy server.</p>
         <button class="btn btn-primary"
                 hx-post="/api/weekly/sync"
-                hx-vals='{"week": {{ week }}, "year": {{ year }}}'
+                hx-vals='{"week": {{ week }}, "year": {{ year }}{% if selected_pub %}, "publisher": "{{ selected_pub }}"{% endif %}}'
                 hx-target="body"
                 hx-indicator="#sync-indicator-empty"
                 style="display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; padding: 0.6rem 1.2rem; cursor: pointer; margin: 0 auto;">

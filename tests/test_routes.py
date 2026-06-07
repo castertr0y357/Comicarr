@@ -296,3 +296,25 @@ async def test_manual_search_route(mock_search_issue, client, db_session):
     assert response.status_code == 200
     assert "Snatched" in response.text
     assert "badge-snatched" in response.text
+
+
+@pytest.mark.asyncio
+@patch("app.routers.api.WeeklyPullService")
+async def test_sync_weekly_releases_route(mock_service_class, client, db_session):
+    mock_service = AsyncMock()
+    mock_service_class.return_value = mock_service
+    mock_service.fetch_and_sync.return_value = {"status": "success", "count": 2, "matched": 0, "new_issues": 0}
+    mock_service.close = AsyncMock()
+
+    payload = {
+        "week": "24",
+        "year": "2026",
+        "publisher": "DC Comics"
+    }
+    response = await client.post("/api/weekly/sync", data=payload)
+    assert response.status_code == 200
+    assert "Weekly Releases" in response.text
+    assert "Week 24 (2026)" in response.text
+    mock_service.fetch_and_sync.assert_called_once_with(24, 2026)
+    mock_service.close.assert_called_once()
+

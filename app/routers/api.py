@@ -295,22 +295,37 @@ class WeeklySyncForm:
     def __init__(
         self,
         week: Optional[int] = Form(None),
-        year: Optional[int] = Form(None)
+        year: Optional[int] = Form(None),
+        publisher: Optional[str] = Form(None)
     ):
         self.week = week
         self.year = year
+        self.publisher = publisher
 
-@router.post("/weekly/sync")
+@router.post("/weekly/sync", response_class=HTMLResponse)
 async def sync_weekly_releases(
+    request: Request,
     form_data: WeeklySyncForm = Depends(),
     session: AsyncSession = Depends(get_session)
 ):
     service = WeeklyPullService(session)
     try:
-        res = await service.fetch_and_sync(form_data.week, form_data.year)
-        return res
+        week = form_data.week
+        year = form_data.year
+        if week is None or year is None:
+            import datetime
+            today = datetime.date.today()
+            if week is None:
+                week = int(today.strftime("%U"))
+            if year is None:
+                year = today.year
+                
+        await service.fetch_and_sync(week, year)
     finally:
         await service.close()
+        
+    from app.routers.web import read_weekly_releases
+    return await read_weekly_releases(request, week, year, form_data.publisher, session)
 
 @router.post("/settings")
 async def update_settings(request: Request, session: AsyncSession = Depends(get_session)):
