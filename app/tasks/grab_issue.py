@@ -18,7 +18,7 @@ from sqlmodel import select
 from app.core.config import settings
 from app.core.logger import logger
 from app.core.sync_db import get_sync_session
-from app.downloaders.factory import get_downloader
+from app.downloaders.factory import get_downloader, get_ordered_downloaders
 from app.models.failed_release import FailedRelease
 from app.models.issue import Issue
 from app.notifications.factory import get_notifier
@@ -105,26 +105,33 @@ def grab_issue(self, issue_id: str, result: dict) -> dict:
         else:
             logger.error(f"[Grab] Could not resolve any direct links from post page {download_url}")
     else:
-        # Resolve the configured downloader
-        downloader = get_downloader()
-        if downloader is None:
+        # Resolve the configured downloaders
+        downloaders = get_ordered_downloaders(release_type=result.get("type"))
+        if not downloaders:
             logger.warning(
-                f"[Grab] No downloader configured (DOWNLOADER_TYPE=none). "
+                f"[Grab] No downloaders configured or enabled for release type '{result.get('type')}' (DOWNLOADER_TYPE={settings.DOWNLOADER_TYPE}). "
                 f"Skipping grab for issue {issue_id}."
             )
             return {"issue_id": issue_id, "status": "Skipped"}
 
-        # Submit the download
-        try:
-            job_id = run_async(
-                downloader.add_download(
-                    url_or_filepath=download_url,
-                    title=title,
+        # Submit the download, trying each downloader in preference order
+        job_id = None
+        for downloader in downloaders:
+            downloader_name = downloader.__class__.__name__
+            logger.info(f"[Grab] Attempting download submission to {downloader_name} for issue {issue_id}")
+            try:
+                job_id = run_async(
+                    downloader.add_download(
+                        url_or_filepath=download_url,
+                        title=title,
+                    )
                 )
-            )
-        except Exception as exc:
-            logger.error(f"[Grab] Downloader raised exception for issue {issue_id}: {exc}")
-            job_id = None
+                if job_id:
+                    logger.info(f"[Grab] Successfully submitted to {downloader_name}. Job ID: {job_id}")
+                    break
+            except Exception as exc:
+                logger.error(f"[Grab] {downloader_name} raised exception for issue {issue_id}: {exc}")
+
 
     if not job_id:
         logger.error(

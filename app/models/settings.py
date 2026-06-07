@@ -31,6 +31,14 @@ class SystemSettings(SQLModel, table=True):
     # Downloader Settings
     DOWNLOADER_TYPE: str = "none"
     
+    SABNZBD_ENABLED: bool = False
+    NZBGET_ENABLED: bool = False
+    QBITTORRENT_ENABLED: bool = False
+    TRANSMISSION_ENABLED: bool = False
+
+    USENET_PREFERENCE: str = "sabnzbd"
+    TORRENT_PREFERENCE: str = "qbittorrent"
+    
     # SABnzbd
     SABNZBD_URL: str = "http://localhost:8080"
     SABNZBD_API_KEY: str = ""

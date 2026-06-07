@@ -10,6 +10,12 @@ This file tracks the current features, environment status, and pending/completed
 ## Current Status
 - **Main codebase**: The legacy CherryPy application codebase has been successfully archived to [`.old/`](file:///E:/Coding Projects/mylar3/.old) for reference.
 - **Recent changes**:
+  - Implemented multi-downloader support with an ecosystem-based preference system:
+    - Extended database schemas with individual enabled toggles and priority settings (`USENET_PREFERENCE`, `TORRENT_PREFERENCE`).
+    - Added a new `"multiple"` mode to the system configurations with dynamic settings-panel UI toggles.
+    - Updated Celery `grab_issue` task with failover capability (tries preferred downloader, falls back to alternative client in the same ecosystem on connection/submission failure).
+    - Added automatic configuration migration on startup mapping legacy single downloader setups.
+    - Added unit test cases covering priority routing, settings migrations, and grab failovers.
   - Moved legacy application folders (`mylar/`, `lib/`, `tests/`, etc.) and databases/configs to `.old/`.
   - Kept only virtual environment (`.venv`), rule standard configs, git files, and `status.md` in the root workspace.
   - Generated a comprehensive [README.md](file:///e:/Coding%20Projects/Comicarr/README.md) detailing the origins of Comicarr, highlighting credits/respect to Mylar, and outlining the new FastAPI + HTMX architecture, features, and setup guides.

@@ -134,264 +134,320 @@
                         <option value="nzbget" {% if settings.DOWNLOADER_TYPE == 'nzbget' %}selected{% endif %}>NZBGet (Usenet)</option>
                         <option value="qbittorrent" {% if settings.DOWNLOADER_TYPE == 'qbittorrent' %}selected{% endif %}>qBittorrent (Torrent)</option>
                         <option value="transmission" {% if settings.DOWNLOADER_TYPE == 'transmission' %}selected{% endif %}>Transmission (Torrent)</option>
+                        <option value="multiple" {% if settings.DOWNLOADER_TYPE == 'multiple' %}selected{% endif %}>Multiple (Ecosystem-based)</option>
                     </select>
                 </div>
 
-                <!-- SABnzbd Fields -->
-                <div id="sabnzbd-fields" class="downloader-fields" style="display: {% if settings.DOWNLOADER_TYPE == 'sabnzbd' %}block{% else %}none{% endif %};">
-                    <h4 style="margin-bottom: 1rem; color: var(--accent-cyan);">SABnzbd Configuration</h4>
-                    <div class="form-group">
-                        <label class="form-label" for="SABNZBD_URL">SABnzbd Host URL</label>
-                        <input class="form-input" type="url" id="SABNZBD_URL" name="SABNZBD_URL" value="{{ settings.SABNZBD_URL }}">
-                    </div>
+                <!-- Multi Downloader Preferences (only visible in multiple mode) -->
+                <div id="multiple-preferences" class="downloader-fields" style="display: {% if settings.DOWNLOADER_TYPE == 'multiple' %}block{% else %}none{% endif %}; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; background-color: var(--bg-surface); margin-bottom: 1.5rem;">
+                    <h4 style="margin-bottom: 1rem; color: var(--accent-cyan); border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Multi-Downloader Ecosystem Preferences</h4>
                     <div class="form-row">
                         <div class="form-group">
-                            <label class="form-label" for="SABNZBD_API_KEY">API Key</label>
-                            <input class="form-input" type="password" id="SABNZBD_API_KEY" name="SABNZBD_API_KEY" value="{{ settings.SABNZBD_API_KEY }}">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="SABNZBD_CATEGORY">Category</label>
-                            <input class="form-input" type="text" id="SABNZBD_CATEGORY" name="SABNZBD_CATEGORY" value="{{ settings.SABNZBD_CATEGORY }}">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="SAB_USERNAME">Username (Optional)</label>
-                            <input class="form-input" type="text" id="SAB_USERNAME" name="SAB_USERNAME" value="{{ settings.SAB_USERNAME }}">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="SAB_PASSWORD">Password (Optional)</label>
-                            <input class="form-input" type="password" id="SAB_PASSWORD" name="SAB_PASSWORD" value="{{ settings.SAB_PASSWORD }}">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="SAB_PRIORITY">Priority</label>
-                            <select class="form-input" id="SAB_PRIORITY" name="SAB_PRIORITY">
-                                <option value="Default" {% if settings.SAB_PRIORITY == 'Default' %}selected{% endif %}>Default</option>
-                                <option value="High" {% if settings.SAB_PRIORITY == 'High' %}selected{% endif %}>High</option>
-                                <option value="Normal" {% if settings.SAB_PRIORITY == 'Normal' %}selected{% endif %}>Normal</option>
-                                <option value="Low" {% if settings.SAB_PRIORITY == 'Low' %}selected{% endif %}>Low</option>
+                            <label class="form-label" for="USENET_PREFERENCE">Preferred Usenet Downloader</label>
+                            <select class="form-input" id="USENET_PREFERENCE" name="USENET_PREFERENCE">
+                                <option value="sabnzbd" {% if settings.USENET_PREFERENCE == 'sabnzbd' %}selected{% endif %}>SABnzbd</option>
+                                <option value="nzbget" {% if settings.USENET_PREFERENCE == 'nzbget' %}selected{% endif %}>NZBGet</option>
                             </select>
+                            <span class="form-help">Client to try first for Usenet (.nzb) downloads.</span>
                         </div>
                         <div class="form-group">
-                            <label class="form-label" for="SAB_DIRECTORY">Completed Download Directory</label>
-                            <input class="form-input" type="text" id="SAB_DIRECTORY" name="SAB_DIRECTORY" value="{{ settings.SAB_DIRECTORY }}" placeholder="Leave empty for client default">
+                            <label class="form-label" for="TORRENT_PREFERENCE">Preferred Torrent Downloader</label>
+                            <select class="form-input" id="TORRENT_PREFERENCE" name="TORRENT_PREFERENCE">
+                                <option value="qbittorrent" {% if settings.TORRENT_PREFERENCE == 'qbittorrent' %}selected{% endif %}>qBittorrent</option>
+                                <option value="transmission" {% if settings.TORRENT_PREFERENCE == 'transmission' %}selected{% endif %}>Transmission</option>
+                            </select>
+                            <span class="form-help">Client to try first for Torrent (.torrent) downloads.</span>
                         </div>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="SAB_MOVING_DELAY">Moving Delay (Seconds)</label>
-                            <input class="form-input" type="number" id="SAB_MOVING_DELAY" name="SAB_MOVING_DELAY" value="{{ settings.SAB_MOVING_DELAY }}">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="SAB_VERSION">SABnzbd Version (Read-only)</label>
-                            <input class="form-input" type="text" id="SAB_VERSION" name="SAB_VERSION" value="{{ settings.SAB_VERSION }}" readonly>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-checkbox-label">
-                                <input class="form-checkbox" type="checkbox" id="SAB_CLIENT_POST_PROCESSING" name="SAB_CLIENT_POST_PROCESSING" {% if settings.SAB_CLIENT_POST_PROCESSING %}checked{% endif %}>
-                                Client-side Post-Processing (CDH)
-                            </label>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-checkbox-label">
-                                <input class="form-checkbox" type="checkbox" id="SAB_REMOVE_COMPLETED" name="SAB_REMOVE_COMPLETED" {% if settings.SAB_REMOVE_COMPLETED %}checked{% endif %}>
-                                Remove Completed Downloads
-                            </label>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-checkbox-label">
-                                <input class="form-checkbox" type="checkbox" id="SAB_REMOVE_FAILED" name="SAB_REMOVE_FAILED" {% if settings.SAB_REMOVE_FAILED %}checked{% endif %}>
-                                Remove Failed Downloads
-                            </label>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-checkbox-label">
-                                <input class="form-checkbox" type="checkbox" id="SAB_TO_COMICARR" name="SAB_TO_COMICARR" {% if settings.SAB_TO_COMICARR %}checked{% endif %}>
-                                Send back to Comicarr
-                            </label>
-                        </div>
-                    </div>
+                </div>
 
-                    <div style="padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem;">
-                        <button type="button" class="btn btn-secondary btn-sm"
-                                hx-post="/api/settings/test-downloader"
-                                hx-vals='{"downloader_type": "sabnzbd"}'
-                                hx-include="[name='SABNZBD_URL'], [name='SABNZBD_API_KEY'], [name='SAB_USERNAME'], [name='SAB_PASSWORD']"
-                                hx-target="#sabnzbd-test-result"
-                                hx-indicator="#sabnzbd-test-indicator">
-                            Test SABnzbd Connection
-                        </button>
-                        <span id="sabnzbd-test-indicator" class="htmx-indicator" style="font-size: 0.85rem; color: var(--text-secondary);">Testing...</span>
+                <!-- SABnzbd Fields -->
+                <div id="sabnzbd-fields" class="downloader-fields" style="display: {% if settings.DOWNLOADER_TYPE == 'sabnzbd' or settings.DOWNLOADER_TYPE == 'multiple' %}block{% else %}none{% endif %}; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; background-color: var(--bg-surface); margin-bottom: 1.5rem;">
+                    <div class="form-group" id="sabnzbd-enable-group" style="display: {% if settings.DOWNLOADER_TYPE == 'multiple' %}block{% else %}none{% endif %}; margin-bottom: 0;">
+                        <label class="form-checkbox-label" style="font-weight: bold; color: var(--text-primary); cursor: pointer;">
+                            <input class="form-checkbox" type="checkbox" id="SABNZBD_ENABLED" name="SABNZBD_ENABLED" {% if settings.SABNZBD_ENABLED %}checked{% endif %} onchange="toggleClientFields('sabnzbd')">
+                            Enable SABnzbd Client
+                        </label>
                     </div>
-                    <div id="sabnzbd-test-result" style="margin-top: 0.75rem; min-height: 20px;"></div>
+                    <div id="sabnzbd-inner-fields" style="display: {% if settings.DOWNLOADER_TYPE == 'sabnzbd' or (settings.DOWNLOADER_TYPE == 'multiple' and settings.SABNZBD_ENABLED) %}block{% else %}none{% endif %}; margin-top: 1.25rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
+                        <h4 style="margin-bottom: 1rem; color: var(--accent-cyan);">SABnzbd Configuration</h4>
+                        <div class="form-group">
+                            <label class="form-label" for="SABNZBD_URL">SABnzbd Host URL</label>
+                            <input class="form-input" type="url" id="SABNZBD_URL" name="SABNZBD_URL" value="{{ settings.SABNZBD_URL }}">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="SABNZBD_API_KEY">API Key</label>
+                                <input class="form-input" type="password" id="SABNZBD_API_KEY" name="SABNZBD_API_KEY" value="{{ settings.SABNZBD_API_KEY }}">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="SABNZBD_CATEGORY">Category</label>
+                                <input class="form-input" type="text" id="SABNZBD_CATEGORY" name="SABNZBD_CATEGORY" value="{{ settings.SABNZBD_CATEGORY }}">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="SAB_USERNAME">Username (Optional)</label>
+                                <input class="form-input" type="text" id="SAB_USERNAME" name="SAB_USERNAME" value="{{ settings.SAB_USERNAME }}">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="SAB_PASSWORD">Password (Optional)</label>
+                                <input class="form-input" type="password" id="SAB_PASSWORD" name="SAB_PASSWORD" value="{{ settings.SAB_PASSWORD }}">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="SAB_PRIORITY">Priority</label>
+                                <select class="form-input" id="SAB_PRIORITY" name="SAB_PRIORITY">
+                                    <option value="Default" {% if settings.SAB_PRIORITY == 'Default' %}selected{% endif %}>Default</option>
+                                    <option value="High" {% if settings.SAB_PRIORITY == 'High' %}selected{% endif %}>High</option>
+                                    <option value="Normal" {% if settings.SAB_PRIORITY == 'Normal' %}selected{% endif %}>Normal</option>
+                                    <option value="Low" {% if settings.SAB_PRIORITY == 'Low' %}selected{% endif %}>Low</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="SAB_DIRECTORY">Completed Download Directory</label>
+                                <input class="form-input" type="text" id="SAB_DIRECTORY" name="SAB_DIRECTORY" value="{{ settings.SAB_DIRECTORY }}" placeholder="Leave empty for client default">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="SAB_MOVING_DELAY">Moving Delay (Seconds)</label>
+                                <input class="form-input" type="number" id="SAB_MOVING_DELAY" name="SAB_MOVING_DELAY" value="{{ settings.SAB_MOVING_DELAY }}">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="SAB_VERSION">SABnzbd Version (Read-only)</label>
+                                <input class="form-input" type="text" id="SAB_VERSION" name="SAB_VERSION" value="{{ settings.SAB_VERSION }}" readonly>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-checkbox-label">
+                                    <input class="form-checkbox" type="checkbox" id="SAB_CLIENT_POST_PROCESSING" name="SAB_CLIENT_POST_PROCESSING" {% if settings.SAB_CLIENT_POST_PROCESSING %}checked{% endif %}>
+                                    Client-side Post-Processing (CDH)
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-checkbox-label">
+                                    <input class="form-checkbox" type="checkbox" id="SAB_REMOVE_COMPLETED" name="SAB_REMOVE_COMPLETED" {% if settings.SAB_REMOVE_COMPLETED %}checked{% endif %}>
+                                    Remove Completed Downloads
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-checkbox-label">
+                                    <input class="form-checkbox" type="checkbox" id="SAB_REMOVE_FAILED" name="SAB_REMOVE_FAILED" {% if settings.SAB_REMOVE_FAILED %}checked{% endif %}>
+                                    Remove Failed Downloads
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-checkbox-label">
+                                    <input class="form-checkbox" type="checkbox" id="SAB_TO_COMICARR" name="SAB_TO_COMICARR" {% if settings.SAB_TO_COMICARR %}checked{% endif %}>
+                                    Send back to Comicarr
+                                </label>
+                            </div>
+                        </div>
+
+                        <div style="padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem;">
+                            <button type="button" class="btn btn-secondary btn-sm"
+                                    hx-post="/api/settings/test-downloader"
+                                    hx-vals='{"downloader_type": "sabnzbd"}'
+                                    hx-include="[name='SABNZBD_URL'], [name='SABNZBD_API_KEY'], [name='SAB_USERNAME'], [name='SAB_PASSWORD']"
+                                    hx-target="#sabnzbd-test-result"
+                                    hx-indicator="#sabnzbd-test-indicator">
+                                Test SABnzbd Connection
+                            </button>
+                            <span id="sabnzbd-test-indicator" class="htmx-indicator" style="font-size: 0.85rem; color: var(--text-secondary);">Testing...</span>
+                        </div>
+                        <div id="sabnzbd-test-result" style="margin-top: 0.75rem; min-height: 20px;"></div>
+                    </div>
                 </div>
 
                 <!-- NZBGet Fields -->
-                <div id="nzbget-fields" class="downloader-fields" style="display: {% if settings.DOWNLOADER_TYPE == 'nzbget' %}block{% else %}none{% endif %};">
-                    <h4 style="margin-bottom: 1rem; color: var(--accent-cyan);">NZBGet Configuration</h4>
-                    <div class="form-group">
-                        <label class="form-label" for="NZBGET_URL">NZBGet Host URL</label>
-                        <input class="form-input" type="url" id="NZBGET_URL" name="NZBGET_URL" value="{{ settings.NZBGET_URL }}">
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="NZBGET_USERNAME">Username</label>
-                            <input class="form-input" type="text" id="NZBGET_USERNAME" name="NZBGET_USERNAME" value="{{ settings.NZBGET_USERNAME }}">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="NZBGET_PASSWORD">Password</label>
-                            <input class="form-input" type="password" id="NZBGET_PASSWORD" name="NZBGET_PASSWORD" value="{{ settings.NZBGET_PASSWORD }}">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="NZBGET_CATEGORY">Category</label>
-                            <input class="form-input" type="text" id="NZBGET_CATEGORY" name="NZBGET_CATEGORY" value="{{ settings.NZBGET_CATEGORY }}">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="NZBGET_PORT">Port Override (Optional)</label>
-                            <input class="form-input" type="text" id="NZBGET_PORT" name="NZBGET_PORT" value="{{ settings.NZBGET_PORT }}" placeholder="6789">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="NZBGET_SUB">URL Sub-folder (Optional)</label>
-                            <input class="form-input" type="text" id="NZBGET_SUB" name="NZBGET_SUB" value="{{ settings.NZBGET_SUB }}" placeholder="xmlrpc">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="NZBGET_PRIORITY">Priority</label>
-                            <select class="form-input" id="NZBGET_PRIORITY" name="NZBGET_PRIORITY">
-                                <option value="" {% if settings.NZBGET_PRIORITY == '' %}selected{% endif %}>Default</option>
-                                <option value="Very High" {% if settings.NZBGET_PRIORITY == 'Very High' %}selected{% endif %}>Very High</option>
-                                <option value="High" {% if settings.NZBGET_PRIORITY == 'High' %}selected{% endif %}>High</option>
-                                <option value="Normal" {% if settings.NZBGET_PRIORITY == 'Normal' %}selected{% endif %}>Normal</option>
-                                <option value="Low" {% if settings.NZBGET_PRIORITY == 'Low' %}selected{% endif %}>Low</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="NZBGET_DIRECTORY">Completed Download Directory</label>
-                            <input class="form-input" type="text" id="NZBGET_DIRECTORY" name="NZBGET_DIRECTORY" value="{{ settings.NZBGET_DIRECTORY }}" placeholder="Leave empty for client default">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-checkbox-label">
-                            <input class="form-checkbox" type="checkbox" id="NZBGET_CLIENT_POST_PROCESSING" name="NZBGET_CLIENT_POST_PROCESSING" {% if settings.NZBGET_CLIENT_POST_PROCESSING %}checked{% endif %}>
-                            Client-side Post-Processing (CDH)
+                <div id="nzbget-fields" class="downloader-fields" style="display: {% if settings.DOWNLOADER_TYPE == 'nzbget' or settings.DOWNLOADER_TYPE == 'multiple' %}block{% else %}none{% endif %}; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; background-color: var(--bg-surface); margin-bottom: 1.5rem;">
+                    <div class="form-group" id="nzbget-enable-group" style="display: {% if settings.DOWNLOADER_TYPE == 'multiple' %}block{% else %}none{% endif %}; margin-bottom: 0;">
+                        <label class="form-checkbox-label" style="font-weight: bold; color: var(--text-primary); cursor: pointer;">
+                            <input class="form-checkbox" type="checkbox" id="NZBGET_ENABLED" name="NZBGET_ENABLED" {% if settings.NZBGET_ENABLED %}checked{% endif %} onchange="toggleClientFields('nzbget')">
+                            Enable NZBGet Client
                         </label>
                     </div>
+                    <div id="nzbget-inner-fields" style="display: {% if settings.DOWNLOADER_TYPE == 'nzbget' or (settings.DOWNLOADER_TYPE == 'multiple' and settings.NZBGET_ENABLED) %}block{% else %}none{% endif %}; margin-top: 1.25rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
+                        <h4 style="margin-bottom: 1rem; color: var(--accent-cyan);">NZBGet Configuration</h4>
+                        <div class="form-group">
+                            <label class="form-label" for="NZBGET_URL">NZBGet Host URL</label>
+                            <input class="form-input" type="url" id="NZBGET_URL" name="NZBGET_URL" value="{{ settings.NZBGET_URL }}">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="NZBGET_USERNAME">Username</label>
+                                <input class="form-input" type="text" id="NZBGET_USERNAME" name="NZBGET_USERNAME" value="{{ settings.NZBGET_USERNAME }}">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="NZBGET_PASSWORD">Password</label>
+                                <input class="form-input" type="password" id="NZBGET_PASSWORD" name="NZBGET_PASSWORD" value="{{ settings.NZBGET_PASSWORD }}">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="NZBGET_CATEGORY">Category</label>
+                                <input class="form-input" type="text" id="NZBGET_CATEGORY" name="NZBGET_CATEGORY" value="{{ settings.NZBGET_CATEGORY }}">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="NZBGET_PORT">Port Override (Optional)</label>
+                                <input class="form-input" type="text" id="NZBGET_PORT" name="NZBGET_PORT" value="{{ settings.NZBGET_PORT }}" placeholder="6789">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="NZBGET_SUB">URL Sub-folder (Optional)</label>
+                                <input class="form-input" type="text" id="NZBGET_SUB" name="NZBGET_SUB" value="{{ settings.NZBGET_SUB }}" placeholder="xmlrpc">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="NZBGET_PRIORITY">Priority</label>
+                                <select class="form-input" id="NZBGET_PRIORITY" name="NZBGET_PRIORITY">
+                                    <option value="" {% if settings.NZBGET_PRIORITY == '' %}selected{% endif %}>Default</option>
+                                    <option value="Very High" {% if settings.NZBGET_PRIORITY == 'Very High' %}selected{% endif %}>Very High</option>
+                                    <option value="High" {% if settings.NZBGET_PRIORITY == 'High' %}selected{% endif %}>High</option>
+                                    <option value="Normal" {% if settings.NZBGET_PRIORITY == 'Normal' %}selected{% endif %}>Normal</option>
+                                    <option value="Low" {% if settings.NZBGET_PRIORITY == 'Low' %}selected{% endif %}>Low</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="NZBGET_DIRECTORY">Completed Download Directory</label>
+                                <input class="form-input" type="text" id="NZBGET_DIRECTORY" name="NZBGET_DIRECTORY" value="{{ settings.NZBGET_DIRECTORY }}" placeholder="Leave empty for client default">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-checkbox-label">
+                                <input class="form-checkbox" type="checkbox" id="NZBGET_CLIENT_POST_PROCESSING" name="NZBGET_CLIENT_POST_PROCESSING" {% if settings.NZBGET_CLIENT_POST_PROCESSING %}checked{% endif %}>
+                                Client-side Post-Processing (CDH)
+                            </label>
+                        </div>
 
-                    <div style="padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem;">
-                        <button type="button" class="btn btn-secondary btn-sm"
-                                hx-post="/api/settings/test-downloader"
-                                hx-vals='{"downloader_type": "nzbget"}'
-                                hx-include="[name='NZBGET_URL'], [name='NZBGET_USERNAME'], [name='NZBGET_PASSWORD']"
-                                hx-target="#nzbget-test-result"
-                                hx-indicator="#nzbget-test-indicator">
-                            Test NZBGet Connection
-                        </button>
-                        <span id="nzbget-test-indicator" class="htmx-indicator" style="font-size: 0.85rem; color: var(--text-secondary);">Testing...</span>
+                        <div style="padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem;">
+                            <button type="button" class="btn btn-secondary btn-sm"
+                                    hx-post="/api/settings/test-downloader"
+                                    hx-vals='{"downloader_type": "nzbget"}'
+                                    hx-include="[name='NZBGET_URL'], [name='NZBGET_USERNAME'], [name='NZBGET_PASSWORD']"
+                                    hx-target="#nzbget-test-result"
+                                    hx-indicator="#nzbget-test-indicator">
+                                Test NZBGet Connection
+                            </button>
+                            <span id="nzbget-test-indicator" class="htmx-indicator" style="font-size: 0.85rem; color: var(--text-secondary);">Testing...</span>
+                        </div>
+                        <div id="nzbget-test-result" style="margin-top: 0.75rem; min-height: 20px;"></div>
                     </div>
-                    <div id="nzbget-test-result" style="margin-top: 0.75rem; min-height: 20px;"></div>
                 </div>
 
                 <!-- qBittorrent Fields -->
-                <div id="qbittorrent-fields" class="downloader-fields" style="display: {% if settings.DOWNLOADER_TYPE == 'qbittorrent' %}block{% else %}none{% endif %};">
-                    <h4 style="margin-bottom: 1rem; color: var(--accent-cyan);">qBittorrent Configuration</h4>
-                    <div class="form-group">
-                        <label class="form-label" for="QBITTORRENT_URL">qBittorrent Host URL</label>
-                        <input class="form-input" type="url" id="QBITTORRENT_URL" name="QBITTORRENT_URL" value="{{ settings.QBITTORRENT_URL }}">
+                <div id="qbittorrent-fields" class="downloader-fields" style="display: {% if settings.DOWNLOADER_TYPE == 'qbittorrent' or settings.DOWNLOADER_TYPE == 'multiple' %}block{% else %}none{% endif %}; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; background-color: var(--bg-surface); margin-bottom: 1.5rem;">
+                    <div class="form-group" id="qbittorrent-enable-group" style="display: {% if settings.DOWNLOADER_TYPE == 'multiple' %}block{% else %}none{% endif %}; margin-bottom: 0;">
+                        <label class="form-checkbox-label" style="font-weight: bold; color: var(--text-primary); cursor: pointer;">
+                            <input class="form-checkbox" type="checkbox" id="QBITTORRENT_ENABLED" name="QBITTORRENT_ENABLED" {% if settings.QBITTORRENT_ENABLED %}checked{% endif %} onchange="toggleClientFields('qbittorrent')">
+                            Enable qBittorrent Client
+                        </label>
                     </div>
-                    <div class="form-row">
+                    <div id="qbittorrent-inner-fields" style="display: {% if settings.DOWNLOADER_TYPE == 'qbittorrent' or (settings.DOWNLOADER_TYPE == 'multiple' and settings.QBITTORRENT_ENABLED) %}block{% else %}none{% endif %}; margin-top: 1.25rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
+                        <h4 style="margin-bottom: 1rem; color: var(--accent-cyan);">qBittorrent Configuration</h4>
                         <div class="form-group">
-                            <label class="form-label" for="QBITTORRENT_USERNAME">Username</label>
-                            <input class="form-input" type="text" id="QBITTORRENT_USERNAME" name="QBITTORRENT_USERNAME" value="{{ settings.QBITTORRENT_USERNAME }}">
+                            <label class="form-label" for="QBITTORRENT_URL">qBittorrent Host URL</label>
+                            <input class="form-input" type="url" id="QBITTORRENT_URL" name="QBITTORRENT_URL" value="{{ settings.QBITTORRENT_URL }}">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="QBITTORRENT_USERNAME">Username</label>
+                                <input class="form-input" type="text" id="QBITTORRENT_USERNAME" name="QBITTORRENT_USERNAME" value="{{ settings.QBITTORRENT_USERNAME }}">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="QBITTORRENT_PASSWORD">Password</label>
+                                <input class="form-input" type="password" id="QBITTORRENT_PASSWORD" name="QBITTORRENT_PASSWORD" value="{{ settings.QBITTORRENT_PASSWORD }}">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="QBITTORRENT_CATEGORY">Category/Tag</label>
+                                <input class="form-input" type="text" id="QBITTORRENT_CATEGORY" name="QBITTORRENT_CATEGORY" value="{{ settings.QBITTORRENT_CATEGORY }}">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="QBITTORRENT_FOLDER">Download Folder Override</label>
+                                <input class="form-input" type="text" id="QBITTORRENT_FOLDER" name="QBITTORRENT_FOLDER" value="{{ settings.QBITTORRENT_FOLDER }}" placeholder="Leave empty for default">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="QBITTORRENT_LABEL">Label / Category Name</label>
+                                <input class="form-input" type="text" id="QBITTORRENT_LABEL" name="QBITTORRENT_LABEL" value="{{ settings.QBITTORRENT_LABEL }}">
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label class="form-label" for="QBITTORRENT_PASSWORD">Password</label>
-                            <input class="form-input" type="password" id="QBITTORRENT_PASSWORD" name="QBITTORRENT_PASSWORD" value="{{ settings.QBITTORRENT_PASSWORD }}">
+                            <label class="form-label" for="QBITTORRENT_LOADACTION">Load Action</label>
+                            <select class="form-input" id="QBITTORRENT_LOADACTION" name="QBITTORRENT_LOADACTION">
+                                <option value="default" {% if settings.QBITTORRENT_LOADACTION == 'default' %}selected{% endif %}>Default</option>
+                                <option value="force_start" {% if settings.QBITTORRENT_LOADACTION == 'force_start' %}selected{% endif %}>Force Start</option>
+                                <option value="paused" {% if settings.QBITTORRENT_LOADACTION == 'paused' %}selected{% endif %}>Add Paused</option>
+                            </select>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label" for="QBITTORRENT_CATEGORY">Category/Tag</label>
-                            <input class="form-input" type="text" id="QBITTORRENT_CATEGORY" name="QBITTORRENT_CATEGORY" value="{{ settings.QBITTORRENT_CATEGORY }}">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="QBITTORRENT_FOLDER">Download Folder Override</label>
-                            <input class="form-input" type="text" id="QBITTORRENT_FOLDER" name="QBITTORRENT_FOLDER" value="{{ settings.QBITTORRENT_FOLDER }}" placeholder="Leave empty for default">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="QBITTORRENT_LABEL">Label / Category Name</label>
-                            <input class="form-input" type="text" id="QBITTORRENT_LABEL" name="QBITTORRENT_LABEL" value="{{ settings.QBITTORRENT_LABEL }}">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="QBITTORRENT_LOADACTION">Load Action</label>
-                        <select class="form-input" id="QBITTORRENT_LOADACTION" name="QBITTORRENT_LOADACTION">
-                            <option value="default" {% if settings.QBITTORRENT_LOADACTION == 'default' %}selected{% endif %}>Default</option>
-                            <option value="force_start" {% if settings.QBITTORRENT_LOADACTION == 'force_start' %}selected{% endif %}>Force Start</option>
-                            <option value="paused" {% if settings.QBITTORRENT_LOADACTION == 'paused' %}selected{% endif %}>Add Paused</option>
-                        </select>
-                    </div>
 
-                    <div style="padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem;">
-                        <button type="button" class="btn btn-secondary btn-sm"
-                                hx-post="/api/settings/test-downloader"
-                                hx-vals='{"downloader_type": "qbittorrent"}'
-                                hx-include="[name='QBITTORRENT_URL'], [name='QBITTORRENT_USERNAME'], [name='QBITTORRENT_PASSWORD']"
-                                hx-target="#qbittorrent-test-result"
-                                hx-indicator="#qbittorrent-test-indicator">
-                            Test qBittorrent Connection
-                        </button>
-                        <span id="qbittorrent-test-indicator" class="htmx-indicator" style="font-size: 0.85rem; color: var(--text-secondary);">Testing...</span>
+                        <div style="padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem;">
+                            <button type="button" class="btn btn-secondary btn-sm"
+                                    hx-post="/api/settings/test-downloader"
+                                    hx-vals='{"downloader_type": "qbittorrent"}'
+                                    hx-include="[name='QBITTORRENT_URL'], [name='QBITTORRENT_USERNAME'], [name='QBITTORRENT_PASSWORD']"
+                                    hx-target="#qbittorrent-test-result"
+                                    hx-indicator="#qbittorrent-test-indicator">
+                                Test qBittorrent Connection
+                            </button>
+                            <span id="qbittorrent-test-indicator" class="htmx-indicator" style="font-size: 0.85rem; color: var(--text-secondary);">Testing...</span>
+                        </div>
+                        <div id="qbittorrent-test-result" style="margin-top: 0.75rem; min-height: 20px;"></div>
                     </div>
-                    <div id="qbittorrent-test-result" style="margin-top: 0.75rem; min-height: 20px;"></div>
                 </div>
 
                 <!-- Transmission Fields -->
-                <div id="transmission-fields" class="downloader-fields" style="display: {% if settings.DOWNLOADER_TYPE == 'transmission' %}block{% else %}none{% endif %};">
-                    <h4 style="margin-bottom: 1rem; color: var(--accent-cyan);">Transmission Configuration</h4>
-                    <div class="form-group">
-                        <label class="form-label" for="TRANSMISSION_URL">Transmission Host URL</label>
-                        <input class="form-input" type="url" id="TRANSMISSION_URL" name="TRANSMISSION_URL" value="{{ settings.TRANSMISSION_URL }}">
+                <div id="transmission-fields" class="downloader-fields" style="display: {% if settings.DOWNLOADER_TYPE == 'transmission' or settings.DOWNLOADER_TYPE == 'multiple' %}block{% else %}none{% endif %}; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; background-color: var(--bg-surface); margin-bottom: 1.5rem;">
+                    <div class="form-group" id="transmission-enable-group" style="display: {% if settings.DOWNLOADER_TYPE == 'multiple' %}block{% else %}none{% endif %}; margin-bottom: 0;">
+                        <label class="form-checkbox-label" style="font-weight: bold; color: var(--text-primary); cursor: pointer;">
+                            <input class="form-checkbox" type="checkbox" id="TRANSMISSION_ENABLED" name="TRANSMISSION_ENABLED" {% if settings.TRANSMISSION_ENABLED %}checked{% endif %} onchange="toggleClientFields('transmission')">
+                            Enable Transmission Client
+                        </label>
                     </div>
-                    <div class="form-row">
+                    <div id="transmission-inner-fields" style="display: {% if settings.DOWNLOADER_TYPE == 'transmission' or (settings.DOWNLOADER_TYPE == 'multiple' and settings.TRANSMISSION_ENABLED) %}block{% else %}none{% endif %}; margin-top: 1.25rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
+                        <h4 style="margin-bottom: 1rem; color: var(--accent-cyan);">Transmission Configuration</h4>
                         <div class="form-group">
-                            <label class="form-label" for="TRANSMISSION_USERNAME">Username</label>
-                            <input class="form-input" type="text" id="TRANSMISSION_USERNAME" name="TRANSMISSION_USERNAME" value="{{ settings.TRANSMISSION_USERNAME }}">
+                            <label class="form-label" for="TRANSMISSION_URL">Transmission Host URL</label>
+                            <input class="form-input" type="url" id="TRANSMISSION_URL" name="TRANSMISSION_URL" value="{{ settings.TRANSMISSION_URL }}">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="TRANSMISSION_USERNAME">Username</label>
+                                <input class="form-input" type="text" id="TRANSMISSION_USERNAME" name="TRANSMISSION_USERNAME" value="{{ settings.TRANSMISSION_USERNAME }}">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="TRANSMISSION_PASSWORD">Password</label>
+                                <input class="form-input" type="password" id="TRANSMISSION_PASSWORD" name="TRANSMISSION_PASSWORD" value="{{ settings.TRANSMISSION_PASSWORD }}">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="TRANSMISSION_DIRECTORY">Download Directory (Optional)</label>
+                                <input class="form-input" type="text" id="TRANSMISSION_DIRECTORY" name="TRANSMISSION_DIRECTORY" value="{{ settings.TRANSMISSION_DIRECTORY }}" placeholder="Leave empty for default">
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label class="form-label" for="TRANSMISSION_PASSWORD">Password</label>
-                            <input class="form-input" type="password" id="TRANSMISSION_PASSWORD" name="TRANSMISSION_PASSWORD" value="{{ settings.TRANSMISSION_PASSWORD }}">
+                            <label class="form-label" for="TRANSMISSION_HOST">Transmission Host Override (Optional)</label>
+                            <input class="form-input" type="text" id="TRANSMISSION_HOST" name="TRANSMISSION_HOST" value="{{ settings.TRANSMISSION_HOST }}" placeholder="localhost">
                         </div>
-                        <div class="form-group">
-                            <label class="form-label" for="TRANSMISSION_DIRECTORY">Download Directory (Optional)</label>
-                            <input class="form-input" type="text" id="TRANSMISSION_DIRECTORY" name="TRANSMISSION_DIRECTORY" value="{{ settings.TRANSMISSION_DIRECTORY }}" placeholder="Leave empty for default">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="TRANSMISSION_HOST">Transmission Host Override (Optional)</label>
-                        <input class="form-input" type="text" id="TRANSMISSION_HOST" name="TRANSMISSION_HOST" value="{{ settings.TRANSMISSION_HOST }}" placeholder="localhost">
-                    </div>
 
-                    <div style="padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem;">
-                        <button type="button" class="btn btn-secondary btn-sm"
-                                hx-post="/api/settings/test-downloader"
-                                hx-vals='{"downloader_type": "transmission"}'
-                                hx-include="[name='TRANSMISSION_URL'], [name='TRANSMISSION_USERNAME'], [name='TRANSMISSION_PASSWORD']"
-                                hx-target="#transmission-test-result"
-                                hx-indicator="#transmission-test-indicator">
-                            Test Transmission Connection
-                        </button>
-                        <span id="transmission-test-indicator" class="htmx-indicator" style="font-size: 0.85rem; color: var(--text-secondary);">Testing...</span>
+                        <div style="padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem;">
+                            <button type="button" class="btn btn-secondary btn-sm"
+                                    hx-post="/api/settings/test-downloader"
+                                    hx-vals='{"downloader_type": "transmission"}'
+                                    hx-include="[name='TRANSMISSION_URL'], [name='TRANSMISSION_USERNAME'], [name='TRANSMISSION_PASSWORD']"
+                                    hx-target="#transmission-test-result"
+                                    hx-indicator="#transmission-test-indicator">
+                                Test Transmission Connection
+                            </button>
+                            <span id="transmission-test-indicator" class="htmx-indicator" style="font-size: 0.85rem; color: var(--text-secondary);">Testing...</span>
+                        </div>
+                        <div id="transmission-test-result" style="margin-top: 0.75rem; min-height: 20px;"></div>
                     </div>
-                    <div id="transmission-test-result" style="margin-top: 0.75rem; min-height: 20px;"></div>
                 </div>
             </div>
 
@@ -1146,14 +1202,57 @@
     // Toggle downloader fields visibility based on dropdown type
     function updateDownloaderFields() {
         const type = document.getElementById('DOWNLOADER_TYPE').value;
-        // Hide all configurations
-        document.querySelectorAll('.downloader-fields').forEach(el => el.style.display = 'none');
-        // Show config for currently selected client type
-        const target = document.getElementById(type + '-fields');
-        if (target) {
-            target.style.display = 'block';
+        
+        // Hide/show the multiple preferences panel
+        const multiplePref = document.getElementById('multiple-preferences');
+        if (multiplePref) {
+            multiplePref.style.display = (type === 'multiple') ? 'block' : 'none';
+        }
+        
+        // Downloader client list
+        const clients = ['sabnzbd', 'nzbget', 'qbittorrent', 'transmission'];
+        
+        clients.forEach(client => {
+            const fieldsDiv = document.getElementById(client + '-fields');
+            const enableGroup = document.getElementById(client + '-enable-group');
+            const innerFields = document.getElementById(client + '-inner-fields');
+            const checkbox = document.getElementById(client.toUpperCase() + '_ENABLED');
+            
+            if (type === 'multiple') {
+                // In multiple mode, show the outer card/fields wrapper for all clients, and show the checkbox enable group
+                if (fieldsDiv) fieldsDiv.style.display = 'block';
+                if (enableGroup) enableGroup.style.display = 'block';
+                
+                // Show the actual inputs only if that client is enabled/checked
+                if (innerFields && checkbox) {
+                    innerFields.style.display = checkbox.checked ? 'block' : 'none';
+                }
+            } else {
+                // In legacy mode, show only the selected client, hide enable checkboxes, and show its inputs
+                if (client === type) {
+                    if (fieldsDiv) fieldsDiv.style.display = 'block';
+                    if (enableGroup) enableGroup.style.display = 'none';
+                    if (innerFields) innerFields.style.display = 'block';
+                } else {
+                    if (fieldsDiv) fieldsDiv.style.display = 'none';
+                }
+            }
+        });
+    }
+
+    function toggleClientFields(client) {
+        const checkbox = document.getElementById(client.toUpperCase() + '_ENABLED');
+        const innerFields = document.getElementById(client + '-inner-fields');
+        if (innerFields && checkbox) {
+            innerFields.style.display = checkbox.checked ? 'block' : 'none';
         }
     }
+
+    // Initialize fields on page load
+    document.addEventListener("DOMContentLoaded", function() {
+        updateDownloaderFields();
+    });
+
 
     // Interactive Toast Notification
     let toastTimeout;

@@ -223,13 +223,13 @@ class TestGrabIssue:
 
     @patch("app.tasks.grab_issue.get_sync_session")
     @patch("app.tasks.grab_issue.run_async")
-    @patch("app.tasks.grab_issue.get_downloader")
+    @patch("app.tasks.grab_issue.get_ordered_downloaders")
     def test_grab_success_updates_status(self, mock_factory, mock_run, mock_ctx):
         """Successful grab → issue.status set to Snatched."""
         issue = _make_issue(status="Wanted")
 
         mock_downloader = MagicMock()
-        mock_factory.return_value = mock_downloader
+        mock_factory.return_value = [mock_downloader]
         mock_run.return_value = "job-id-123"  # Simulates downloader returning a job ID
 
         mock_session = _make_mock_session([issue])
@@ -242,10 +242,10 @@ class TestGrabIssue:
         assert result["status"] == "Snatched"
         assert issue.status == "Snatched"
 
-    @patch("app.tasks.grab_issue.get_downloader")
+    @patch("app.tasks.grab_issue.get_ordered_downloaders")
     def test_no_downloader_returns_skipped(self, mock_factory):
         """DOWNLOADER_TYPE=none → no DB interaction, returns Skipped."""
-        mock_factory.return_value = None
+        mock_factory.return_value = []
 
         from app.tasks.grab_issue import grab_issue
         result = grab_issue(issue_id="5678", result=self._result)
@@ -254,13 +254,13 @@ class TestGrabIssue:
 
     @patch("app.tasks.grab_issue.get_sync_session")
     @patch("app.tasks.grab_issue.run_async")
-    @patch("app.tasks.grab_issue.get_downloader")
+    @patch("app.tasks.grab_issue.get_ordered_downloaders")
     def test_downloader_failure_returns_failed(self, mock_factory, mock_run, mock_ctx):
         """Downloader returning None → status Failed, issue NOT updated."""
         issue = _make_issue(status="Wanted")
 
         mock_downloader = MagicMock()
-        mock_factory.return_value = mock_downloader
+        mock_factory.return_value = [mock_downloader]
         mock_run.return_value = None  # Downloader failure
 
         # Session should NOT be called since we bail out before DB update
@@ -273,6 +273,57 @@ class TestGrabIssue:
 
         assert result["status"] == "Failed"
         assert issue.status == "Wanted"  # Unchanged
+
+    @patch("app.tasks.grab_issue.get_sync_session")
+    @patch("app.tasks.grab_issue.run_async")
+    @patch("app.tasks.grab_issue.get_ordered_downloaders")
+    def test_grab_failover_success(self, mock_factory, mock_run, mock_ctx):
+        """First downloader fails (None), second downloader succeeds (job ID)."""
+        issue = _make_issue(status="Wanted")
+
+        mock_dl1 = MagicMock()
+        mock_dl2 = MagicMock()
+        mock_factory.return_value = [mock_dl1, mock_dl2]
+        
+        # mock_run side effect: dl1 fails (returns None), dl2 succeeds (returns 'job-id-456')
+        mock_run.side_effect = [None, "job-id-456"]
+
+        mock_session = _make_mock_session([issue])
+        mock_ctx.return_value.__enter__ = MagicMock(return_value=mock_session)
+        mock_ctx.return_value.__exit__ = MagicMock(return_value=False)
+
+        from app.tasks.grab_issue import grab_issue
+        result = grab_issue(issue_id="5678", result=self._result)
+
+        assert result["status"] == "Snatched"
+        assert issue.status == "Snatched"
+        assert mock_run.call_count == 2
+
+    @patch("app.tasks.grab_issue.get_sync_session")
+    @patch("app.tasks.grab_issue.run_async")
+    @patch("app.tasks.grab_issue.get_ordered_downloaders")
+    def test_grab_failover_all_failed(self, mock_factory, mock_run, mock_ctx):
+        """Both downloaders fail (raising exception/returning None) → status Failed."""
+        issue = _make_issue(status="Wanted")
+
+        mock_dl1 = MagicMock()
+        mock_dl2 = MagicMock()
+        mock_factory.return_value = [mock_dl1, mock_dl2]
+        
+        # mock_run side effect: both return None
+        mock_run.side_effect = [None, None]
+
+        mock_session = MagicMock()
+        mock_ctx.return_value.__enter__ = MagicMock(return_value=mock_session)
+        mock_ctx.return_value.__exit__ = MagicMock(return_value=False)
+
+        from app.tasks.grab_issue import grab_issue
+        result = grab_issue(issue_id="5678", result=self._result)
+
+        assert result["status"] == "Failed"
+        assert issue.status == "Wanted"  # Unchanged
+        assert mock_run.call_count == 2
+
 
 
 # ---------------------------------------------------------------------------

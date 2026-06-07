@@ -42,6 +42,24 @@ async def initialize_settings(session: AsyncSession) -> None:
                 raise integrity_err
             logger.info("System settings was concurrently initialized, using existing row.")
     
+    # Legacy downloader migration: map old single DOWNLOADER_TYPE to new boolean toggles
+    legacy_type = db_settings.DOWNLOADER_TYPE.lower().strip()
+    if legacy_type in ("sabnzbd", "nzbget", "qbittorrent", "transmission"):
+        logger.info(f"[Settings] Migrating legacy single downloader {legacy_type} to multi-downloader mode")
+        if legacy_type == "sabnzbd":
+            db_settings.SABNZBD_ENABLED = True
+        elif legacy_type == "nzbget":
+            db_settings.NZBGET_ENABLED = True
+        elif legacy_type == "qbittorrent":
+            db_settings.QBITTORRENT_ENABLED = True
+        elif legacy_type == "transmission":
+            db_settings.TRANSMISSION_ENABLED = True
+        
+        db_settings.DOWNLOADER_TYPE = "multiple"
+        session.add(db_settings)
+        await session.commit()
+        await session.refresh(db_settings)
+
     # Check and migrate legacy search providers if table is empty
     from app.models.provider import SearchProvider
     stmt_prov = select(SearchProvider)

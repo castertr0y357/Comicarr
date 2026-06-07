@@ -150,7 +150,7 @@ class TestGrabIssueNotifications:
 
     @patch("app.tasks.grab_issue.get_sync_session")
     @patch("app.tasks.grab_issue.run_async")
-    @patch("app.tasks.grab_issue.get_downloader")
+    @patch("app.tasks.grab_issue.get_ordered_downloaders")
     @patch("app.tasks.grab_issue.get_notifier")
     def test_snatch_notification_sent_on_success(
         self, mock_get_notifier, mock_factory, mock_run, mock_ctx
@@ -158,7 +158,7 @@ class TestGrabIssueNotifications:
         """On successful grab, notify() is called with notify_type='success'."""
         issue = _make_issue(status="Wanted")
         mock_downloader = MagicMock()
-        mock_factory.return_value = mock_downloader
+        mock_factory.return_value = [mock_downloader]
         mock_run.return_value = "job-id-123"
 
         mock_session = _make_mock_session(first_return=issue)
@@ -184,13 +184,14 @@ class TestGrabIssueNotifications:
 
     @patch("app.tasks.grab_issue.get_sync_session")
     @patch("app.tasks.grab_issue.run_async")
-    @patch("app.tasks.grab_issue.get_downloader")
+    @patch("app.tasks.grab_issue.get_ordered_downloaders")
     @patch("app.tasks.grab_issue.get_notifier")
     def test_failure_notification_sent_on_failed_grab(
         self, mock_get_notifier, mock_factory, mock_run, mock_ctx
     ):
         """When downloader returns None, failure notification is fired."""
-        mock_factory.return_value = MagicMock()
+        mock_downloader = MagicMock()
+        mock_factory.return_value = [mock_downloader]
         mock_run.return_value = None  # Downloader failure
 
         mock_notifier = MagicMock()
@@ -207,13 +208,14 @@ class TestGrabIssueNotifications:
         mock_get_notifier.assert_called()
 
     @patch("app.tasks.grab_issue.run_async")
-    @patch("app.tasks.grab_issue.get_downloader")
+    @patch("app.tasks.grab_issue.get_ordered_downloaders")
     @patch("app.tasks.grab_issue.get_notifier")
     def test_no_notification_when_notify_on_failure_false(
         self, mock_get_notifier, mock_factory, mock_run
     ):
         """NOTIFY_ON_FAILURE=False → get_notifier NOT called on grab failure."""
-        mock_factory.return_value = MagicMock()
+        mock_downloader = MagicMock()
+        mock_factory.return_value = [mock_downloader]
         mock_run.return_value = None  # Failure
 
         with patch("app.tasks.grab_issue.settings") as ms:
@@ -223,6 +225,7 @@ class TestGrabIssueNotifications:
             grab_issue(issue_id="5678", result=self._result)
 
         mock_get_notifier.assert_not_called()
+
 
 
 # ---------------------------------------------------------------------------

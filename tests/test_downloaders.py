@@ -518,3 +518,67 @@ class TestTransmissionDownloader:
 
             status = await client.get_status("deadbeef1234")
             assert status["status"] == "Completed"
+
+
+
+# ---------------------------------------------------------------------------
+# Multiple Downloader Resolution tests
+# ---------------------------------------------------------------------------
+
+def test_get_ordered_downloaders_legacy():
+    # Test legacy behavior where DOWNLOADER_TYPE is a single client
+    with patch("app.downloaders.factory.settings") as mock_settings:
+        mock_settings.DOWNLOADER_TYPE = "sabnzbd"
+        from app.downloaders.factory import get_ordered_downloaders
+        downloaders = get_ordered_downloaders(release_type="nzb")
+        assert len(downloaders) == 1
+        assert isinstance(downloaders[0], SABnzbdDownloader)
+
+def test_get_ordered_downloaders_multiple_nzb():
+    with patch("app.downloaders.factory.settings") as mock_settings:
+        mock_settings.DOWNLOADER_TYPE = "multiple"
+        mock_settings.SABNZBD_ENABLED = True
+        mock_settings.NZBGET_ENABLED = True
+        
+        # SABnzbd preferred
+        mock_settings.USENET_PREFERENCE = "sabnzbd"
+        from app.downloaders.factory import get_ordered_downloaders
+        downloaders = get_ordered_downloaders(release_type="nzb")
+        assert len(downloaders) == 2
+        assert isinstance(downloaders[0], SABnzbdDownloader)
+        assert isinstance(downloaders[1], NZBGetDownloader)
+        
+        # NZBGet preferred
+        mock_settings.USENET_PREFERENCE = "nzbget"
+        downloaders = get_ordered_downloaders(release_type="nzb")
+        assert len(downloaders) == 2
+        assert isinstance(downloaders[0], NZBGetDownloader)
+        assert isinstance(downloaders[1], SABnzbdDownloader)
+        
+        # Only one enabled
+        mock_settings.SABNZBD_ENABLED = False
+        downloaders = get_ordered_downloaders(release_type="nzb")
+        assert len(downloaders) == 1
+        assert isinstance(downloaders[0], NZBGetDownloader)
+
+def test_get_ordered_downloaders_multiple_torrent():
+    with patch("app.downloaders.factory.settings") as mock_settings:
+        mock_settings.DOWNLOADER_TYPE = "multiple"
+        mock_settings.QBITTORRENT_ENABLED = True
+        mock_settings.TRANSMISSION_ENABLED = True
+        
+        # qBittorrent preferred
+        mock_settings.TORRENT_PREFERENCE = "qbittorrent"
+        from app.downloaders.factory import get_ordered_downloaders
+        downloaders = get_ordered_downloaders(release_type="torrent")
+        assert len(downloaders) == 2
+        assert isinstance(downloaders[0], QBittorrentDownloader)
+        assert isinstance(downloaders[1], TransmissionDownloader)
+        
+        # Transmission preferred
+        mock_settings.TORRENT_PREFERENCE = "transmission"
+        downloaders = get_ordered_downloaders(release_type="torrent")
+        assert len(downloaders) == 2
+        assert isinstance(downloaders[0], TransmissionDownloader)
+        assert isinstance(downloaders[1], QBittorrentDownloader)
+

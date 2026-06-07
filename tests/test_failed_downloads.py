@@ -86,10 +86,10 @@ async def test_search_issue_filters_blacklisted_release(mock_get, mock_sessionma
 
 @patch("app.tasks.grab_issue.get_sync_session")
 @patch("app.tasks.grab_issue.run_async")
-@patch("app.tasks.grab_issue.get_downloader")
+@patch("app.tasks.grab_issue.get_ordered_downloaders")
 def test_grab_issue_submission_failure_blacklists_release(mock_downloader_factory, mock_run, mock_ctx):
     # Setup downloader to throw an exception / return no job ID
-    mock_downloader_factory.return_value = MagicMock()
+    mock_downloader_factory.return_value = [MagicMock()]
     mock_run.return_value = None  # Indicates failure to submit
 
     issue = Issue(issue_id="101", comic_id="1", issue_number="1", status="Wanted")
@@ -122,15 +122,16 @@ def test_grab_issue_submission_failure_blacklists_release(mock_downloader_factor
 
 @patch("app.tasks.grab_issue.get_sync_session")
 @patch("app.tasks.grab_issue.run_async")
-@patch("app.tasks.grab_issue.get_downloader")
+@patch("app.tasks.grab_issue.get_ordered_downloaders")
 @patch("app.tasks.search_wanted.search_wanted.delay")
 def test_grab_issue_submission_failure_auto_retries(mock_search_delay, mock_downloader_factory, mock_run, mock_ctx):
-    mock_downloader_factory.return_value = MagicMock()
+    mock_downloader_factory.return_value = [MagicMock()]
     mock_run.return_value = None
 
     issue = Issue(issue_id="101", comic_id="1", issue_number="1", status="Wanted")
     mock_session = _make_mock_session([None, issue])
     mock_ctx.return_value.__enter__ = MagicMock(return_value=mock_session)
+
 
     grab_result = {
         "title": "The Amazing Spider-Man 001",

@@ -157,3 +157,31 @@ async def test_settings_web_and_api_routes(client, db_session):
     assert settings.COMICVINE_API_KEY == "api_posted_key"
     assert settings.DOWNLOADER_TYPE == "qbittorrent"
     assert settings.GRAB_ON_MATCH is False
+
+
+@pytest.mark.asyncio
+async def test_legacy_downloader_migration(db_session):
+    # Ensure starting without a settings row
+    await db_session.execute(delete(SystemSettings))
+    await db_session.commit()
+    
+    # Pre-seed with legacy downloader type
+    db_settings = SystemSettings(id=1, DOWNLOADER_TYPE="sabnzbd")
+    db_session.add(db_settings)
+    await db_session.commit()
+    
+    # Run initialize_settings which triggers migration
+    await initialize_settings(db_session)
+    
+    # Re-fetch from DB
+    stmt = select(SystemSettings).where(SystemSettings.id == 1)
+    result = await db_session.execute(stmt)
+    updated = result.scalars().first()
+    
+    # Should have migrated to "multiple" and enabled SABnzbd
+    assert updated.DOWNLOADER_TYPE == "multiple"
+    assert updated.SABNZBD_ENABLED is True
+    assert updated.NZBGET_ENABLED is False
+    assert updated.QBITTORRENT_ENABLED is False
+    assert updated.TRANSMISSION_ENABLED is False
+
