@@ -73,7 +73,7 @@ async def test_weekly_pull_sync_and_match(db_session):
         
         # Verify proxy parameters were passed
         mock_get.assert_called_once_with(
-            "https://walksoftly.itsaninja.party/newcomics.php",
+            "https://talkhard.notaninja.party/newcomics.php",
             params={"week": "24", "year": "2026"}
         )
         

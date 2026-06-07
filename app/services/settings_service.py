@@ -60,6 +60,14 @@ async def initialize_settings(session: AsyncSession) -> None:
         await session.commit()
         await session.refresh(db_settings)
 
+    # Migrate legacy weekly pull proxy URL if it is the old walksoftly URL
+    if "walksoftly.itsaninja.party" in db_settings.WEEKLY_PULL_PROXY_URL:
+        logger.info("[Settings] Migrating legacy weekly pull proxy URL to talkhard.notaninja.party")
+        db_settings.WEEKLY_PULL_PROXY_URL = "https://talkhard.notaninja.party/newcomics.php"
+        session.add(db_settings)
+        await session.commit()
+        await session.refresh(db_settings)
+
     # Check and migrate legacy search providers if table is empty
     from app.models.provider import SearchProvider
     stmt_prov = select(SearchProvider)

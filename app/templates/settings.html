@@ -226,11 +226,17 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label class="form-label" for="SAB_USERNAME">Username (Optional)</label>
+                                <label class="form-label" for="SAB_USERNAME">
+                                    Username (Optional)
+                                    <button type="button" class="info-btn" data-title="SABnzbd Username" data-desc="The username used to authenticate with your SABnzbd downloader client Web UI." data-impact="Required if SABnzbd is configured with basic authentication credentials.">i</button>
+                                </label>
                                 <input class="form-input" type="text" id="SAB_USERNAME" name="SAB_USERNAME" value="{{ settings.SAB_USERNAME }}">
                             </div>
                             <div class="form-group">
-                                <label class="form-label" for="SAB_PASSWORD">Password (Optional)</label>
+                                <label class="form-label" for="SAB_PASSWORD">
+                                    Password (Optional)
+                                    <button type="button" class="info-btn" data-title="SABnzbd Password" data-desc="The password associated with the SABnzbd username." data-impact="Used together with the username for API authentication when submitting NZBs.">i</button>
+                                </label>
                                 <input class="form-input" type="password" id="SAB_PASSWORD" name="SAB_PASSWORD" value="{{ settings.SAB_PASSWORD }}">
                             </div>
                         </div>
@@ -264,7 +270,10 @@
                                 <input class="form-input" type="number" id="SAB_MOVING_DELAY" name="SAB_MOVING_DELAY" value="{{ settings.SAB_MOVING_DELAY }}">
                             </div>
                             <div class="form-group">
-                                <label class="form-label" for="SAB_VERSION">SABnzbd Version (Read-only)</label>
+                                <label class="form-label" for="SAB_VERSION">
+                                    SABnzbd Version (Read-only)
+                                    <button type="button" class="info-btn" data-title="SABnzbd Version" data-desc="The reported software version of the connected SABnzbd instance." data-impact="Read-only field displaying client compatibility status.">i</button>
+                                </label>
                                 <input class="form-input" type="text" id="SAB_VERSION" name="SAB_VERSION" value="{{ settings.SAB_VERSION }}" readonly>
                             </div>
                         </div>
@@ -289,12 +298,14 @@
                                 <label class="form-checkbox-label">
                                     <input class="form-checkbox" type="checkbox" id="SAB_REMOVE_FAILED" name="SAB_REMOVE_FAILED" {% if settings.SAB_REMOVE_FAILED %}checked{% endif %}>
                                     Remove Failed Downloads
+                                    <button type="button" class="info-btn" data-title="Remove Failed Downloads" data-desc="Automatically deletes failed download tasks from SABnzbd history." data-impact="If enabled, failed NZB downloads are cleared to prevent queue clutter.">i</button>
                                 </label>
                             </div>
                             <div class="form-group">
                                 <label class="form-checkbox-label">
                                     <input class="form-checkbox" type="checkbox" id="SAB_TO_COMICARR" name="SAB_TO_COMICARR" {% if settings.SAB_TO_COMICARR %}checked{% endif %}>
                                     Send back to Comicarr
+                                    <button type="button" class="info-btn" data-title="Send back to Comicarr" data-desc="Sends post-processing callbacks or failures back to Comicarr for logging and tracking." data-impact="Helps update issue status when downloader tasks finish or error.">i</button>
                                 </label>
                             </div>
                         </div>
@@ -334,11 +345,17 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label class="form-label" for="NZBGET_USERNAME">Username</label>
+                                <label class="form-label" for="NZBGET_USERNAME">
+                                    Username
+                                    <button type="button" class="info-btn" data-title="NZBGet Username" data-desc="The username for authenticating with your NZBGet client Web UI." data-impact="Required to connect if NZBGet basic auth is active.">i</button>
+                                </label>
                                 <input class="form-input" type="text" id="NZBGET_USERNAME" name="NZBGET_USERNAME" value="{{ settings.NZBGET_USERNAME }}">
                             </div>
                             <div class="form-group">
-                                <label class="form-label" for="NZBGET_PASSWORD">Password</label>
+                                <label class="form-label" for="NZBGET_PASSWORD">
+                                    Password
+                                    <button type="button" class="info-btn" data-title="NZBGet Password" data-desc="The password corresponding to the NZBGet username." data-impact="Allows Comicarr to connect and queue NZB downloads.">i</button>
+                                </label>
                                 <input class="form-input" type="password" id="NZBGET_PASSWORD" name="NZBGET_PASSWORD" value="{{ settings.NZBGET_PASSWORD }}">
                             </div>
                             <div class="form-group">
@@ -351,11 +368,17 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label class="form-label" for="NZBGET_PORT">Port Override (Optional)</label>
+                                <label class="form-label" for="NZBGET_PORT">
+                                    Port Override (Optional)
+                                    <button type="button" class="info-btn" data-title="NZBGet Port Override" data-desc="Custom connection port override for NZBGet." data-impact="Leave blank to use the default port specified in the Host URL. Useful if connecting through a specific container bridge.">i</button>
+                                </label>
                                 <input class="form-input" type="text" id="NZBGET_PORT" name="NZBGET_PORT" value="{{ settings.NZBGET_PORT }}" placeholder="6789">
                             </div>
                             <div class="form-group">
-                                <label class="form-label" for="NZBGET_SUB">URL Sub-folder (Optional)</label>
+                                <label class="form-label" for="NZBGET_SUB">
+                                    URL Sub-folder (Optional)
+                                    <button type="button" class="info-btn" data-title="NZBGet URL Sub-folder" data-desc="The URL prefix or subdirectory path for your NZBGet JSON-RPC endpoint." data-impact="Useful if NZBGet runs behind a reverse proxy (e.g. /nzbget/xmlrpc). Defaults to xmlrpc.">i</button>
+                                </label>
                                 <input class="form-input" type="text" id="NZBGET_SUB" name="NZBGET_SUB" value="{{ settings.NZBGET_SUB }}" placeholder="xmlrpc">
                             </div>
                         </div>
@@ -424,11 +447,17 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label class="form-label" for="QBITTORRENT_USERNAME">Username</label>
+                                <label class="form-label" for="QBITTORRENT_USERNAME">
+                                    Username
+                                    <button type="button" class="info-btn" data-title="qBittorrent Username" data-desc="The login username for qBittorrent Web UI API access." data-impact="Enables session login verification on the qBittorrent client.">i</button>
+                                </label>
                                 <input class="form-input" type="text" id="QBITTORRENT_USERNAME" name="QBITTORRENT_USERNAME" value="{{ settings.QBITTORRENT_USERNAME }}">
                             </div>
                             <div class="form-group">
-                                <label class="form-label" for="QBITTORRENT_PASSWORD">Password</label>
+                                <label class="form-label" for="QBITTORRENT_PASSWORD">
+                                    Password
+                                    <button type="button" class="info-btn" data-title="qBittorrent Password" data-desc="The login password for qBittorrent." data-impact="Used to authenticate session requests when submitting magnets.">i</button>
+                                </label>
                                 <input class="form-input" type="password" id="QBITTORRENT_PASSWORD" name="QBITTORRENT_PASSWORD" value="{{ settings.QBITTORRENT_PASSWORD }}">
                             </div>
                             <div class="form-group">
@@ -448,7 +477,10 @@
                                 <input class="form-input" type="text" id="QBITTORRENT_FOLDER" name="QBITTORRENT_FOLDER" value="{{ settings.QBITTORRENT_FOLDER }}" placeholder="Leave empty for default">
                             </div>
                             <div class="form-group">
-                                <label class="form-label" for="QBITTORRENT_LABEL">Label / Category Name</label>
+                                <label class="form-label" for="QBITTORRENT_LABEL">
+                                    Label / Category Name
+                                    <button type="button" class="info-btn" data-title="Torrent Label" data-desc="The label or category group name applied to snatched torrent downloads." data-impact="Organizes files in the downloader UI and routes them to category paths.">i</button>
+                                </label>
                                 <input class="form-input" type="text" id="QBITTORRENT_LABEL" name="QBITTORRENT_LABEL" value="{{ settings.QBITTORRENT_LABEL }}">
                             </div>
                         </div>
@@ -499,11 +531,17 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label class="form-label" for="TRANSMISSION_USERNAME">Username</label>
+                                <label class="form-label" for="TRANSMISSION_USERNAME">
+                                    Username
+                                    <button type="button" class="info-btn" data-title="Transmission Username" data-desc="The username for Transmission RPC authentication." data-impact="Required to submit API commands to Transmission if basic auth is enabled.">i</button>
+                                </label>
                                 <input class="form-input" type="text" id="TRANSMISSION_USERNAME" name="TRANSMISSION_USERNAME" value="{{ settings.TRANSMISSION_USERNAME }}">
                             </div>
                             <div class="form-group">
-                                <label class="form-label" for="TRANSMISSION_PASSWORD">Password</label>
+                                <label class="form-label" for="TRANSMISSION_PASSWORD">
+                                    Password
+                                    <button type="button" class="info-btn" data-title="Transmission Password" data-desc="The password corresponding to the Transmission username." data-impact="Used for RPC credentials when dispatching torrents.">i</button>
+                                </label>
                                 <input class="form-input" type="password" id="TRANSMISSION_PASSWORD" name="TRANSMISSION_PASSWORD" value="{{ settings.TRANSMISSION_PASSWORD }}">
                             </div>
                             <div class="form-group">
@@ -925,7 +963,10 @@
                         <input class="form-input" type="number" id="ALT_PULL" name="ALT_PULL" value="{{ settings.ALT_PULL }}">
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="PULL_REFRESH">Pull Refresh Date (Read-only)</label>
+                        <label class="form-label" for="PULL_REFRESH">
+                            Pull Refresh Date (Read-only)
+                            <button type="button" class="info-btn" data-title="Pull Refresh Date" data-desc="The timestamp when weekly pull lists were last synced with Diamond distribution databases." data-impact="Read-only indicator tracking catalog update states.">i</button>
+                        </label>
                         <input class="form-input" type="text" id="PULL_REFRESH" name="PULL_REFRESH" value="{{ settings.PULL_REFRESH }}" readonly>
                     </div>
                 </div>
@@ -966,11 +1007,17 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="WEEKFOLDER_FORMAT">Weekly Folder Format</label>
+                        <label class="form-label" for="WEEKFOLDER_FORMAT">
+                            Weekly Folder Format
+                            <button type="button" class="info-btn" data-title="Weekly Folder Format" data-desc="Format schema style for creating weekly pull folders." data-impact="Controls sub-folder naming structure inside the weekly pull folder location.">i</button>
+                        </label>
                         <input class="form-input" type="number" id="WEEKFOLDER_FORMAT" name="WEEKFOLDER_FORMAT" value="{{ settings.WEEKFOLDER_FORMAT }}">
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="WEEKFOLDER_LOC">Weekly Folder Location</label>
+                        <label class="form-label" for="WEEKFOLDER_LOC">
+                            Weekly Folder Location
+                            <button type="button" class="info-btn" data-title="Weekly Folder Location" data-desc="The parent storage path on disk where weekly pull folders are created." data-impact="If blank, folders are saved in the default download destination root.">i</button>
+                        </label>
                         <input class="form-input" type="text" id="WEEKFOLDER_LOC" name="WEEKFOLDER_LOC" value="{{ settings.WEEKFOLDER_LOC }}">
                     </div>
                 </div>
@@ -1181,11 +1228,17 @@
                         </label>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="HTTP_PROXY">HTTP Proxy Address</label>
+                        <label class="form-label" for="HTTP_PROXY">
+                            HTTP Proxy Address
+                            <button type="button" class="info-btn" data-title="HTTP Proxy Address" data-desc="HTTP proxy server address (e.g. http://proxy:port) to route DDL/web requests." data-impact="Helps bypass geo-IP limitations or network blocks on direct download providers.">i</button>
+                        </label>
                         <input class="form-input" type="text" id="HTTP_PROXY" name="HTTP_PROXY" value="{{ settings.HTTP_PROXY }}">
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="HTTPS_PROXY">HTTPS Proxy Address</label>
+                        <label class="form-label" for="HTTPS_PROXY">
+                            HTTPS Proxy Address
+                            <button type="button" class="info-btn" data-title="HTTPS Proxy Address" data-desc="HTTPS proxy server address to route secure DDL/web requests." data-impact="Ensures SSL requests are routed through the proxy.">i</button>
+                        </label>
                         <input class="form-input" type="text" id="HTTPS_PROXY" name="HTTPS_PROXY" value="{{ settings.HTTPS_PROXY }}">
                     </div>
                 </div>
@@ -1218,11 +1271,17 @@
                         <input class="form-input" type="url" id="EXTERNAL_SERVER" name="EXTERNAL_SERVER" value="{{ settings.EXTERNAL_SERVER }}">
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="EXTERNAL_USERNAME">External Username</label>
+                        <label class="form-label" for="EXTERNAL_USERNAME">
+                            External Username
+                            <button type="button" class="info-btn" data-title="External Server Username" data-desc="The username used to log in to the secondary external catalog server." data-impact="Enables secure downloads from private external mirror servers.">i</button>
+                        </label>
                         <input class="form-input" type="text" id="EXTERNAL_USERNAME" name="EXTERNAL_USERNAME" value="{{ settings.EXTERNAL_USERNAME }}">
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="EXTERNAL_APIKEY">External API Key</label>
+                        <label class="form-label" for="EXTERNAL_APIKEY">
+                            External API Key
+                            <button type="button" class="info-btn" data-title="External Server API Key" data-desc="The API key or auth token for the external catalog server." data-impact="Used to authenticate search requests to the external catalog.">i</button>
+                        </label>
                         <input class="form-input" type="password" id="EXTERNAL_APIKEY" name="EXTERNAL_APIKEY" value="{{ settings.EXTERNAL_APIKEY }}">
                     </div>
                 </div>
@@ -1307,12 +1366,18 @@
                     
                     <div class="form-row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
                         <div class="form-group" style="margin-bottom: 0;">
-                            <label class="form-label" style="font-size: 0.8rem;">Provider Name</label>
+                            <label class="form-label" style="font-size: 0.8rem;">
+                                Provider Name
+                                <button type="button" class="info-btn" data-title="Provider Name" data-desc="A custom user-friendly name for this search indexer." data-impact="Used to identify this provider in search logs and status panels.">i</button>
+                            </label>
                             <input class="form-input" type="text" id="add-provider-name" name="name" placeholder="e.g. MyIndexer" style="padding: 0.4rem 0.6rem; font-size: 0.9rem;">
                         </div>
                         
                         <div class="form-group" style="margin-bottom: 0;">
-                            <label class="form-label" style="font-size: 0.8rem;">Type</label>
+                            <label class="form-label" style="font-size: 0.8rem;">
+                                Type
+                                <button type="button" class="info-btn" data-title="Indexer Type" data-desc="The technology protocol used by the indexer." data-impact="Choose Newznab for Usenet indexes, Torznab for Torrent trackers, or Prowlarr for unified indexing services.">i</button>
+                            </label>
                             <select class="form-input" id="add-provider-type" name="type" style="padding: 0.4rem 0.6rem; font-size: 0.9rem; background-color: var(--bg-main);">
                                 <option value="newznab">Newznab (Usenet)</option>
                                 <option value="torznab">Torznab (Torrent)</option>
@@ -1323,19 +1388,28 @@
 
                     <div class="form-row" style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-top: 0.75rem;">
                         <div class="form-group" style="margin-bottom: 0;">
-                            <label class="form-label" style="font-size: 0.8rem;">Host URL</label>
+                            <label class="form-label" style="font-size: 0.8rem;">
+                                Host URL
+                                <button type="button" class="info-btn" data-title="Host URL" data-desc="The base HTTP/HTTPS connection address for the indexer API." data-impact="Comicarr queries this URL to retrieve RSS feeds and search results.">i</button>
+                            </label>
                             <input class="form-input" type="url" id="add-provider-url" name="url" placeholder="e.g. http://localhost:9696 or https://api.indexer.com" style="padding: 0.4rem 0.6rem; font-size: 0.9rem;">
                         </div>
                         
                         <div class="form-group" style="margin-bottom: 0;">
-                            <label class="form-label" style="font-size: 0.8rem;">API Key</label>
+                            <label class="form-label" style="font-size: 0.8rem;">
+                                API Key
+                                <button type="button" class="info-btn" data-title="API Key" data-desc="The secret authentication key for this indexer." data-impact="Allows authenticated searches. Leave empty if the provider is public and doesn't require keys.">i</button>
+                            </label>
                             <input class="form-input" type="password" id="add-provider-apikey" name="apikey" placeholder="API Key" style="padding: 0.4rem 0.6rem; font-size: 0.9rem;">
                         </div>
                     </div>
 
                     <div class="form-row" style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 0.75rem;">
                         <div class="form-group" style="margin-bottom: 0;">
-                            <label class="form-label" style="font-size: 0.8rem;">Categories (Comma-separated)</label>
+                            <label class="form-label" style="font-size: 0.8rem;">
+                                Categories (Comma-separated)
+                                <button type="button" class="info-btn" data-title="Categories" data-desc="Comma-separated list of category IDs to search (e.g. 7030,8020 for comics)." data-impact="Filters search queries to target specific metadata sections on the indexer.">i</button>
+                            </label>
                             <input class="form-input" type="text" id="add-provider-categories" name="categories" value="7030,8020" placeholder="7030,8020" style="padding: 0.4rem 0.6rem; font-size: 0.9rem;">
                         </div>
                     </div>
@@ -1343,6 +1417,7 @@
                     <label class="form-checkbox-label" style="margin-top: 0.75rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
                         <input class="form-checkbox" type="checkbox" id="add-provider-enabled" name="enabled" checked value="true">
                         Enabled by default
+                        <button type="button" class="info-btn" data-title="Enabled" data-desc="Toggles whether this search provider is queried during automatic search routines." data-impact="Disable to temporarily bypass an indexer without deleting its configuration.">i</button>
                     </label>
 
                     <div id="add-test-result" style="margin-top: 0.75rem; min-height: 20px;"></div>

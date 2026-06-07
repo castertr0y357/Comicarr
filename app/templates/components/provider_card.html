@@ -4,17 +4,24 @@
         <label class="form-checkbox-label" style="margin: 0; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
             <input class="form-checkbox" type="checkbox" name="enabled" {% if provider.enabled %}checked{% endif %} value="true">
             Enabled
+            <button type="button" class="info-btn" data-title="Enabled" data-desc="Toggles whether this search provider is queried during automatic search routines." data-impact="Disable to temporarily bypass an indexer without deleting its configuration.">i</button>
         </label>
     </div>
     
     <div class="form-row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
         <div class="form-group" style="margin-bottom: 0;">
-            <label class="form-label" style="font-size: 0.8rem;">Provider Name</label>
+            <label class="form-label" style="font-size: 0.8rem;">
+                Provider Name
+                <button type="button" class="info-btn" data-title="Provider Name" data-desc="A custom user-friendly name for this search indexer." data-impact="Used to identify this provider in search logs and status panels.">i</button>
+            </label>
             <input class="form-input" type="text" name="name" value="{{ provider.name }}" required style="padding: 0.4rem 0.6rem; font-size: 0.9rem;">
         </div>
         
         <div class="form-group" style="margin-bottom: 0;">
-            <label class="form-label" style="font-size: 0.8rem;">Type</label>
+            <label class="form-label" style="font-size: 0.8rem;">
+                Type
+                <button type="button" class="info-btn" data-title="Indexer Type" data-desc="The technology protocol used by the indexer." data-impact="Choose Newznab for Usenet indexes, Torznab for Torrent trackers, or Prowlarr for unified indexing services.">i</button>
+            </label>
             <select class="form-input" name="type" required style="padding: 0.4rem 0.6rem; font-size: 0.9rem; background-color: var(--bg-main);">
                 <option value="newznab" {% if provider.type == 'newznab' %}selected{% endif %}>Newznab</option>
                 <option value="torznab" {% if provider.type == 'torznab' %}selected{% endif %}>Torznab</option>
@@ -25,19 +32,28 @@
 
     <div class="form-row" style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-top: 0.75rem;">
         <div class="form-group" style="margin-bottom: 0;">
-            <label class="form-label" style="font-size: 0.8rem;">Host URL</label>
+            <label class="form-label" style="font-size: 0.8rem;">
+                Host URL
+                <button type="button" class="info-btn" data-title="Host URL" data-desc="The base HTTP/HTTPS connection address for the indexer API." data-impact="Comicarr queries this URL to retrieve RSS feeds and search results.">i</button>
+            </label>
             <input class="form-input" type="url" name="url" value="{{ provider.url }}" required style="padding: 0.4rem 0.6rem; font-size: 0.9rem;">
         </div>
         
         <div class="form-group" style="margin-bottom: 0;">
-            <label class="form-label" style="font-size: 0.8rem;">API Key</label>
+            <label class="form-label" style="font-size: 0.8rem;">
+                API Key
+                <button type="button" class="info-btn" data-title="API Key" data-desc="The secret authentication key for this indexer." data-impact="Allows authenticated searches. Leave empty if the provider is public and doesn't require keys.">i</button>
+            </label>
             <input class="form-input" type="password" name="apikey" value="{{ provider.apikey or '' }}" style="padding: 0.4rem 0.6rem; font-size: 0.9rem;">
         </div>
     </div>
 
     <div class="form-row" style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 0.75rem;">
         <div class="form-group" style="margin-bottom: 0;">
-            <label class="form-label" style="font-size: 0.8rem;">Categories (Comma-separated)</label>
+            <label class="form-label" style="font-size: 0.8rem;">
+                Categories (Comma-separated)
+                <button type="button" class="info-btn" data-title="Categories" data-desc="Comma-separated list of category IDs to search (e.g. 7030,8020 for comics)." data-impact="Filters search queries to target specific metadata sections on the indexer.">i</button>
+            </label>
             <input class="form-input" type="text" name="categories" value="{{ provider.categories or '' }}" placeholder="7030,8020" style="padding: 0.4rem 0.6rem; font-size: 0.9rem;">
         </div>
     </div>

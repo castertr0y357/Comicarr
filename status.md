@@ -10,6 +10,11 @@ This file tracks the current features, environment status, and pending/completed
 ## Current Status
 - **Main codebase**: The legacy CherryPy application codebase has been successfully archived to [`.old/`](file:///E:/Coding Projects/mylar3/.old) for reference.
 - **Recent changes**:
+  - Fixed weekly pull list sync issue caused by the retirement of the legacy Walksoftly proxy URL (`walksoftly.itsaninja.party`):
+    - Replaced the default weekly pull proxy URL with the new active community proxy (`talkhard.notaninja.party`).
+    - Added database migration logic in `initialize_settings` to automatically migrate existing user configurations on startup.
+    - Updated references, docstrings, and tests in `test_weekly_pull.py` and `test_settings.py` to target the new proxy URL.
+    - Staged, verified compatibility with the full test suite, and committed.
   - Implemented interactive `(i)` help tooltips for all system configuration options:
     - Added CSS styling in `style.css` for a rounded inline info button and floating dark glassmorphism tooltip card.
     - Integrated descriptions and functional impact strings for settings under ComicVine, Scheduler, Downloaders, Torrents, Notifications, Folders, Metatagging, Weekly Pulls, and DDL tabs.

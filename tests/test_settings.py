@@ -185,3 +185,27 @@ async def test_legacy_downloader_migration(db_session):
     assert updated.QBITTORRENT_ENABLED is False
     assert updated.TRANSMISSION_ENABLED is False
 
+
+@pytest.mark.asyncio
+async def test_legacy_weekly_pull_proxy_migration(db_session):
+    # Ensure starting without a settings row
+    await db_session.execute(delete(SystemSettings))
+    await db_session.commit()
+    
+    # Pre-seed with legacy walksoftly URL
+    db_settings = SystemSettings(id=1, WEEKLY_PULL_PROXY_URL="https://walksoftly.itsaninja.party/newcomics.php")
+    db_session.add(db_settings)
+    await db_session.commit()
+    
+    # Run initialize_settings which triggers migration
+    await initialize_settings(db_session)
+    
+    # Re-fetch from DB
+    stmt = select(SystemSettings).where(SystemSettings.id == 1)
+    result = await db_session.execute(stmt)
+    updated = result.scalars().first()
+    
+    # Should have migrated to talkhard URL
+    assert updated.WEEKLY_PULL_PROXY_URL == "https://talkhard.notaninja.party/newcomics.php"
+
+

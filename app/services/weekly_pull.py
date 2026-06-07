@@ -40,7 +40,7 @@ class WeeklyPullService:
 
     async def fetch_and_sync(self, week: Optional[int] = None, year: Optional[int] = None) -> Dict[str, Any]:
         """
-        Fetches the weekly release schedule from the walksoftly proxy and syncs it.
+        Fetches the weekly release schedule from the configured proxy and syncs it.
         """
         if week is None or year is None:
             info = await self.get_current_week_info()
