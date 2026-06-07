@@ -35,11 +35,17 @@ class QBittorrentDownloader(BaseDownloader):
     Docs: https://github.com/qbittorrent/qBittorrent/wiki/WebUI-API-(qBittorrent-4.1)
     """
 
-    def __init__(self) -> None:
-        self._base_url = settings.QBITTORRENT_URL.rstrip("/")
-        self._username = settings.QBITTORRENT_USERNAME
-        self._password = settings.QBITTORRENT_PASSWORD
-        self._category = settings.QBITTORRENT_CATEGORY
+    def __init__(
+        self,
+        url: Optional[str] = None,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
+        category: Optional[str] = None,
+    ) -> None:
+        self._base_url = (url or settings.QBITTORRENT_URL).rstrip("/")
+        self._username = username if username is not None else settings.QBITTORRENT_USERNAME
+        self._password = password if password is not None else settings.QBITTORRENT_PASSWORD
+        self._category = category or settings.QBITTORRENT_CATEGORY
         self._cookies: Optional[httpx.Cookies] = None
 
     async def _get_authenticated_client(self) -> httpx.AsyncClient:

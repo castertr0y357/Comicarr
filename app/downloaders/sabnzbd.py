@@ -13,10 +13,19 @@ class SABnzbdDownloader(BaseDownloader):
     Docs: https://sabnzbd.org/wiki/advanced/api
     """
 
-    def __init__(self) -> None:
-        self._base_url = settings.SABNZBD_URL.rstrip("/") + "/api"
-        self._api_key = settings.SABNZBD_API_KEY
-        self._category = settings.SABNZBD_CATEGORY
+    def __init__(
+        self,
+        url: Optional[str] = None,
+        api_key: Optional[str] = None,
+        category: Optional[str] = None,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
+    ) -> None:
+        self._base_url = (url or settings.SABNZBD_URL).rstrip("/") + "/api"
+        self._api_key = api_key or settings.SABNZBD_API_KEY
+        self._category = category or settings.SABNZBD_CATEGORY
+        self._username = username or settings.SAB_USERNAME
+        self._password = password or settings.SAB_PASSWORD
 
     def _base_params(self) -> Dict[str, str]:
         return {"apikey": self._api_key, "output": "json"}

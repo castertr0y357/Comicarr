@@ -464,3 +464,172 @@ async def api_test_provider(
             '</div>'
         )
         return HTMLResponse(content=content, headers={"HX-Trigger": trigger})
+
+
+def make_test_response(ok: bool, message: str) -> HTMLResponse:
+    import json
+    msg_type = "success" if ok else "error"
+    trigger = json.dumps({"show-toast": {"message": message, "type": msg_type}})
+    
+    if ok:
+        content = (
+            f'<div class="test-indicator-box test-success">'
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">'
+            '<polyline points="20 6 9 17 4 12"></polyline>'
+            '</svg>'
+            f'<span>{message}</span>'
+            '</div>'
+        )
+    else:
+        content = (
+            f'<div class="test-indicator-box test-failed">'
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">'
+            '<line x1="18" y1="6" x2="6" y2="18"></line>'
+            '<line x1="6" y1="6" x2="18" y2="18"></line>'
+            '</svg>'
+            f'<span>{message}</span>'
+            '</div>'
+        )
+        
+    return HTMLResponse(content=content, headers={"HX-Trigger": trigger})
+
+
+@router.post("/settings/test-comicvine", response_class=HTMLResponse)
+async def api_test_comicvine(
+    api_key: str = Form(...),
+    url: str = Form(...),
+    user_agent: Optional[str] = Form(None),
+    verify: Optional[str] = Form(None)
+):
+    from app.services.cv_api import ComicVineClient
+    verify_val = verify in ("on", "true", "1") if verify is not None else False
+    client = ComicVineClient(
+        api_key=api_key,
+        base_url=url,
+        user_agent=user_agent,
+        verify=verify_val
+    )
+    try:
+        await client.search_volumes("ComicarrTest")
+        return make_test_response(True, "ComicVine Connection Successful!")
+    except Exception as e:
+        logger.error(f"ComicVine test connection failed: {e}")
+        return make_test_response(False, f"ComicVine Connection Failed: {e}")
+
+
+@router.post("/settings/test-weekly-pull-proxy", response_class=HTMLResponse)
+async def api_test_weekly_pull_proxy(
+    url: str = Form(...)
+):
+    import datetime
+    import httpx
+    try:
+        today = datetime.date.today()
+        weeknumber = int(today.strftime("%U"))
+        year = today.year
+        
+        async with httpx.AsyncClient(verify=settings.CV_VERIFY, timeout=15.0) as client:
+            response = await client.get(url, params={"week": str(weeknumber), "year": str(year)})
+            if response.status_code == 200:
+                data = response.json()
+                if isinstance(data, list):
+                    return make_test_response(True, "Weekly Pull Proxy Connection Successful!")
+            return make_test_response(False, f"Proxy returned status code {response.status_code}")
+    except Exception as e:
+        logger.error(f"Weekly Pull Proxy test connection failed: {e}")
+        return make_test_response(False, f"Proxy Connection Failed: {e}")
+
+
+@router.post("/settings/test-downloader", response_class=HTMLResponse)
+async def api_test_downloader(
+    downloader_type: str = Form(...),
+    url: Optional[str] = Form(None),
+    apikey: Optional[str] = Form(None),
+    username: Optional[str] = Form(None),
+    password: Optional[str] = Form(None),
+    directory: Optional[str] = Form(None)
+):
+    downloader_type = downloader_type.lower().strip()
+    try:
+        if downloader_type == "sabnzbd":
+            from app.downloaders.sabnzbd import SABnzbdDownloader
+            client = SABnzbdDownloader(url=url, api_key=apikey, username=username, password=password)
+        elif downloader_type == "nzbget":
+            from app.downloaders.nzbget import NZBGetDownloader
+            client = NZBGetDownloader(url=url, username=username, password=password)
+        elif downloader_type == "qbittorrent":
+            from app.downloaders.qbittorrent import QBittorrentDownloader
+            client = QBittorrentDownloader(url=url, username=username, password=password)
+        elif downloader_type == "transmission":
+            from app.downloaders.transmission import TransmissionDownloader
+            client = TransmissionDownloader(url=url, username=username, password=password, directory=directory)
+        else:
+            return make_test_response(False, f"Unknown downloader type: {downloader_type}")
+            
+        ok = await client.test_connection()
+        if ok:
+            return make_test_response(True, f"{downloader_type.upper()} Connection Successful!")
+        else:
+            return make_test_response(False, f"{downloader_type.upper()} Connection Failed")
+    except Exception as e:
+        logger.error(f"Downloader {downloader_type} test connection failed: {e}")
+        return make_test_response(False, f"Connection Failed: {e}")
+
+
+@router.post("/settings/test-flaresolverr", response_class=HTMLResponse)
+async def api_test_flaresolverr(
+    url: str = Form(...)
+):
+    import httpx
+    payload = {"cmd": "sessions.list"}
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            resp = await client.post(url.rstrip("/"), json=payload)
+            if resp.status_code == 200:
+                data = resp.json()
+                if data.get("status") == "ok" or "sessions" in data:
+                    return make_test_response(True, "FlareSolverr Connection Successful!")
+            return make_test_response(False, f"FlareSolverr returned status: {resp.status_code}")
+    except Exception as e:
+        logger.error(f"FlareSolverr test connection failed: {e}")
+        return make_test_response(False, f"FlareSolverr Connection Failed: {e}")
+
+
+@router.post("/settings/test-external-server", response_class=HTMLResponse)
+async def api_test_external_server(
+    url: str = Form(...),
+    username: Optional[str] = Form(None),
+    apikey: Optional[str] = Form(None)
+):
+    import httpx
+    headers = {}
+    if apikey:
+        headers["X-Api-Key"] = apikey
+        headers["Authorization"] = f"Bearer {apikey}"
+    auth = httpx.BasicAuth(username, apikey) if (username and apikey) else None
+    
+    try:
+        async with httpx.AsyncClient(timeout=10.0, verify=False) as client:
+            resp = await client.get(url, headers=headers, auth=auth)
+            if resp.status_code >= 500:
+                return make_test_response(False, f"Server returned error code: {resp.status_code}")
+            return make_test_response(True, "External Server Connection Successful!")
+    except Exception as e:
+        logger.error(f"External Server test connection failed: {e}")
+        return make_test_response(False, f"External Server Connection Failed: {e}")
+
+
+@router.post("/settings/test-jd2", response_class=HTMLResponse)
+async def api_test_jd2(
+    url: str = Form(...)
+):
+    from app.services.ddl import JDownloader2
+    client = JDownloader2(url)
+    try:
+        ok = await client.test_connection()
+        if ok:
+            return make_test_response(True, "JDownloader 2 Connection Successful!")
+        return make_test_response(False, "JDownloader 2 Connection Failed")
+    except Exception as e:
+        logger.error(f"JDownloader 2 test connection failed: {e}")
+        return make_test_response(False, f"JDownloader 2 Connection Failed: {e}")

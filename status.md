@@ -30,6 +30,13 @@ This file tracks the current features, environment status, and pending/completed
     - Added automated migration logic for seamless onboarding of legacy configurations on startup.
     - Added 4 unit tests covering connection check mocking, data migrations, API endpoints, and Prowlarr JSON parsing.
   - Fixed a critical HTML formatting bug in [settings.html](file:///e:/Coding%20Projects/Comicarr/app/templates/settings.html) where the `div#providers` tab content container was missing its closing `</div>` tag. This mismatched nesting distorted the DOM tree, causing HTMX's `closest .provider-card` and `closest .add-provider-card` selectors to return `null` and throw a Javascript `TypeError` at runtime.
+  - Implemented setting connection testing buttons for all settings requiring external services:
+    - Extended backend client and downloader client constructors (ComicVineClient, SABnzbd, NZBGet, qBittorrent, Transmission) to accept dynamic credentials for isolated testing.
+    - Added a `test_connection()` method to the JDownloader 2 client using the local `/jd/version` endpoint.
+    - Exposed six connection testing API routes in [app/routers/api.py](file:///e:/Coding%20Projects/Comicarr/app/routers/api.py) returning clean HTML visual indicators and triggering client-side toasts.
+    - Integrated "Test Connection" buttons in [settings.html](file:///e:/Coding%20Projects/Comicarr/app/templates/settings.html) for ComicVine, Weekly Pull list proxy, downloader clients, FlareSolverr, JDownloader 2, and the External Content Server.
+    - Added the missing `WEEKLY_PULL_PROXY_URL` input configuration field to the pulls UI settings tab.
+    - Added 6 automated tests in [tests/test_connection_endpoints.py](file:///e:/Coding%20Projects/Comicarr/tests/test_connection_endpoints.py) covering all success and failure testing endpoints.
 
 
 

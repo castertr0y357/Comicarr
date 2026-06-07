@@ -66,6 +66,18 @@
                         Verify SSL Certificates
                     </label>
                 </div>
+
+                <div style="padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-secondary btn-sm"
+                            hx-post="/api/settings/test-comicvine"
+                            hx-include="[name='COMICVINE_API_KEY'], [name='COMICVINE_API_URL'], [name='CV_USER_AGENT'], [name='CV_VERIFY']"
+                            hx-target="#cv-test-result"
+                            hx-indicator="#cv-test-indicator">
+                        Test Connection
+                    </button>
+                    <span id="cv-test-indicator" class="htmx-indicator" style="font-size: 0.85rem; color: var(--text-secondary);">Testing...</span>
+                </div>
+                <div id="cv-test-result" style="margin-top: 0.75rem; min-height: 20px;"></div>
             </div>
 
             <!-- Search & Scheduler Tab -->
@@ -205,6 +217,19 @@
                             </label>
                         </div>
                     </div>
+
+                    <div style="padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem;">
+                        <button type="button" class="btn btn-secondary btn-sm"
+                                hx-post="/api/settings/test-downloader"
+                                hx-vals='{"downloader_type": "sabnzbd"}'
+                                hx-include="[name='SABNZBD_URL'], [name='SABNZBD_API_KEY'], [name='SAB_USERNAME'], [name='SAB_PASSWORD']"
+                                hx-target="#sabnzbd-test-result"
+                                hx-indicator="#sabnzbd-test-indicator">
+                            Test SABnzbd Connection
+                        </button>
+                        <span id="sabnzbd-test-indicator" class="htmx-indicator" style="font-size: 0.85rem; color: var(--text-secondary);">Testing...</span>
+                    </div>
+                    <div id="sabnzbd-test-result" style="margin-top: 0.75rem; min-height: 20px;"></div>
                 </div>
 
                 <!-- NZBGet Fields -->
@@ -260,6 +285,19 @@
                             Client-side Post-Processing (CDH)
                         </label>
                     </div>
+
+                    <div style="padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem;">
+                        <button type="button" class="btn btn-secondary btn-sm"
+                                hx-post="/api/settings/test-downloader"
+                                hx-vals='{"downloader_type": "nzbget"}'
+                                hx-include="[name='NZBGET_URL'], [name='NZBGET_USERNAME'], [name='NZBGET_PASSWORD']"
+                                hx-target="#nzbget-test-result"
+                                hx-indicator="#nzbget-test-indicator">
+                            Test NZBGet Connection
+                        </button>
+                        <span id="nzbget-test-indicator" class="htmx-indicator" style="font-size: 0.85rem; color: var(--text-secondary);">Testing...</span>
+                    </div>
+                    <div id="nzbget-test-result" style="margin-top: 0.75rem; min-height: 20px;"></div>
                 </div>
 
                 <!-- qBittorrent Fields -->
@@ -301,6 +339,19 @@
                             <option value="paused" {% if settings.QBITTORRENT_LOADACTION == 'paused' %}selected{% endif %}>Add Paused</option>
                         </select>
                     </div>
+
+                    <div style="padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem;">
+                        <button type="button" class="btn btn-secondary btn-sm"
+                                hx-post="/api/settings/test-downloader"
+                                hx-vals='{"downloader_type": "qbittorrent"}'
+                                hx-include="[name='QBITTORRENT_URL'], [name='QBITTORRENT_USERNAME'], [name='QBITTORRENT_PASSWORD']"
+                                hx-target="#qbittorrent-test-result"
+                                hx-indicator="#qbittorrent-test-indicator">
+                            Test qBittorrent Connection
+                        </button>
+                        <span id="qbittorrent-test-indicator" class="htmx-indicator" style="font-size: 0.85rem; color: var(--text-secondary);">Testing...</span>
+                    </div>
+                    <div id="qbittorrent-test-result" style="margin-top: 0.75rem; min-height: 20px;"></div>
                 </div>
 
                 <!-- Transmission Fields -->
@@ -328,6 +379,19 @@
                         <label class="form-label" for="TRANSMISSION_HOST">Transmission Host Override (Optional)</label>
                         <input class="form-input" type="text" id="TRANSMISSION_HOST" name="TRANSMISSION_HOST" value="{{ settings.TRANSMISSION_HOST }}" placeholder="localhost">
                     </div>
+
+                    <div style="padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem;">
+                        <button type="button" class="btn btn-secondary btn-sm"
+                                hx-post="/api/settings/test-downloader"
+                                hx-vals='{"downloader_type": "transmission"}'
+                                hx-include="[name='TRANSMISSION_URL'], [name='TRANSMISSION_USERNAME'], [name='TRANSMISSION_PASSWORD']"
+                                hx-target="#transmission-test-result"
+                                hx-indicator="#transmission-test-indicator">
+                            Test Transmission Connection
+                        </button>
+                        <span id="transmission-test-indicator" class="htmx-indicator" style="font-size: 0.85rem; color: var(--text-secondary);">Testing...</span>
+                    </div>
+                    <div id="transmission-test-result" style="margin-top: 0.75rem; min-height: 20px;"></div>
                 </div>
             </div>
 
@@ -630,6 +694,23 @@
                     Configure pull lists scheduler, weekly issue naming, and story arc directories.
                 </p>
 
+                <div class="form-group" style="margin-bottom: 2rem;">
+                    <label class="form-label" for="WEEKLY_PULL_PROXY_URL">Weekly Pull Proxy URL</label>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <input class="form-input" type="url" id="WEEKLY_PULL_PROXY_URL" name="WEEKLY_PULL_PROXY_URL" value="{{ settings.WEEKLY_PULL_PROXY_URL }}" style="flex-grow: 1;">
+                        <button type="button" class="btn btn-secondary btn-sm"
+                                hx-post="/api/settings/test-weekly-pull-proxy"
+                                hx-include="[name='WEEKLY_PULL_PROXY_URL']"
+                                hx-target="#weekly-pull-test-result"
+                                hx-indicator="#weekly-pull-test-indicator"
+                                style="white-space: nowrap;">
+                            Test Connection
+                        </button>
+                    </div>
+                    <span id="weekly-pull-test-indicator" class="htmx-indicator" style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem; display: block;">Testing...</span>
+                    <div id="weekly-pull-test-result" style="margin-top: 0.75rem; min-height: 20px;"></div>
+                </div>
+
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label" for="ALT_PULL">Alt Pull Mode</label>
@@ -823,7 +904,19 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="FLARESOLVERR_URL">FlareSolverr API URL</label>
-                        <input class="form-input" type="url" id="FLARESOLVERR_URL" name="FLARESOLVERR_URL" value="{{ settings.FLARESOLVERR_URL }}" placeholder="http://localhost:8191/v1">
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <input class="form-input" type="url" id="FLARESOLVERR_URL" name="FLARESOLVERR_URL" value="{{ settings.FLARESOLVERR_URL }}" placeholder="http://localhost:8191/v1" style="flex-grow: 1;">
+                            <button type="button" class="btn btn-secondary btn-sm"
+                                    hx-post="/api/settings/test-flaresolverr"
+                                    hx-include="[name='FLARESOLVERR_URL']"
+                                    hx-target="#flaresolverr-test-result"
+                                    hx-indicator="#flaresolverr-test-indicator"
+                                    style="white-space: nowrap;">
+                                Test FlareSolverr
+                            </button>
+                        </div>
+                        <span id="flaresolverr-test-indicator" class="htmx-indicator" style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem; display: block;">Testing...</span>
+                        <div id="flaresolverr-test-result" style="margin-top: 0.75rem; min-height: 20px;"></div>
                     </div>
                 </div>
 
@@ -875,6 +968,17 @@
                         <input class="form-input" type="password" id="EXTERNAL_APIKEY" name="EXTERNAL_APIKEY" value="{{ settings.EXTERNAL_APIKEY }}">
                     </div>
                 </div>
+                <div style="padding-top: 0.5rem; display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                    <button type="button" class="btn btn-secondary btn-sm"
+                            hx-post="/api/settings/test-external-server"
+                            hx-include="[name='EXTERNAL_SERVER'], [name='EXTERNAL_USERNAME'], [name='EXTERNAL_APIKEY']"
+                            hx-target="#external-server-test-result"
+                            hx-indicator="#external-server-test-indicator">
+                        Test External Server
+                    </button>
+                    <span id="external-server-test-indicator" class="htmx-indicator" style="font-size: 0.85rem; color: var(--text-secondary);">Testing...</span>
+                </div>
+                <div id="external-server-test-result" style="margin-top: 0.75rem; min-height: 20px; margin-bottom: 1.5rem;"></div>
 
                 <div class="form-row">
                     <div class="form-group">
@@ -885,7 +989,19 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="JD2_URL">JD2 API Endpoint URL</label>
-                        <input class="form-input" type="url" id="JD2_URL" name="JD2_URL" value="{{ settings.JD2_URL }}">
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <input class="form-input" type="url" id="JD2_URL" name="JD2_URL" value="{{ settings.JD2_URL }}" style="flex-grow: 1;">
+                            <button type="button" class="btn btn-secondary btn-sm"
+                                    hx-post="/api/settings/test-jd2"
+                                    hx-include="[name='JD2_URL']"
+                                    hx-target="#jd2-test-result"
+                                    hx-indicator="#jd2-test-indicator"
+                                    style="white-space: nowrap;">
+                                Test JDownloader 2
+                            </button>
+                        </div>
+                        <span id="jd2-test-indicator" class="htmx-indicator" style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem; display: block;">Testing...</span>
+                        <div id="jd2-test-result" style="margin-top: 0.75rem; min-height: 20px;"></div>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="JD2_DEST_DIR">JD2 Destination Folder Override</label>

@@ -73,9 +73,17 @@ class ComicVineAPIError(Exception):
 
 
 class ComicVineClient:
-    def __init__(self):
-        self.api_key = settings.COMICVINE_API_KEY
-        self.base_url = settings.COMICVINE_API_URL.rstrip("/")
+    def __init__(
+        self,
+        api_key: Optional[str] = None,
+        base_url: Optional[str] = None,
+        user_agent: Optional[str] = None,
+        verify: Optional[bool] = None,
+    ):
+        self.api_key = api_key or settings.COMICVINE_API_KEY
+        self.base_url = (base_url or settings.COMICVINE_API_URL).rstrip("/")
+        self.user_agent = user_agent or settings.CV_USER_AGENT
+        self.verify = verify if verify is not None else settings.CV_VERIFY
         self._last_request_time = 0.0
         self._lock = asyncio.Lock()
 
@@ -105,12 +113,12 @@ class ComicVineClient:
             req_params.update(params)
 
         headers = {
-            "User-Agent": settings.CV_USER_AGENT
+            "User-Agent": self.user_agent
         }
 
         logger.fdebug(f"[ComicVine] GET {url} with params {params}")
         
-        async with httpx.AsyncClient(verify=settings.CV_VERIFY) as client:
+        async with httpx.AsyncClient(verify=self.verify) as client:
             try:
                 response = await client.get(url, params=req_params, headers=headers, timeout=30.0)
             except Exception as e:

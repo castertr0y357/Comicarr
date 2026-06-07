@@ -34,6 +34,17 @@ class JDownloader2:
     def __init__(self, base_url: str):
         self.base_url = base_url.rstrip("/")
 
+    async def test_connection(self) -> bool:
+        endpoint = f"{self.base_url}/jd/version"
+        try:
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                resp = await client.get(endpoint)
+                if resp.status_code == 200:
+                    return True
+        except Exception as e:
+            logger.error(f"[JD2] Connection test failed: {e}")
+        return False
+
     async def submit(self, links: Dict[str, str], package_name: str) -> Dict[str, Any]:
         """
         Submits links (URL -> Priority) to JDownloader2.

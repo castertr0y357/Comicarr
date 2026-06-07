@@ -16,22 +16,29 @@ class NZBGetDownloader(BaseDownloader):
     Docs: https://nzbget.net/api
     """
 
-    def __init__(self) -> None:
-        parsed = urlparse(settings.NZBGET_URL)
+    def __init__(
+        self,
+        url: Optional[str] = None,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
+        category: Optional[str] = None,
+    ) -> None:
+        target_url = url or settings.NZBGET_URL
+        parsed = urlparse(target_url)
         scheme = parsed.scheme or "http"
         host = parsed.hostname or "localhost"
         port = parsed.port or 6789
         path = parsed.path.rstrip("/") or ""
 
-        user = settings.NZBGET_USERNAME
-        password = settings.NZBGET_PASSWORD
+        user = username if username is not None else settings.NZBGET_USERNAME
+        passwd = password if password is not None else settings.NZBGET_PASSWORD
 
-        if user and password:
-            self._rpc_url = f"{scheme}://{user}:{password}@{host}:{port}{path}/jsonrpc"
+        if user and passwd:
+            self._rpc_url = f"{scheme}://{user}:{passwd}@{host}:{port}{path}/jsonrpc"
         else:
             self._rpc_url = f"{scheme}://{host}:{port}{path}/jsonrpc"
 
-        self._category = settings.NZBGET_CATEGORY
+        self._category = category or settings.NZBGET_CATEGORY
 
     async def _rpc_call(self, method: str, params: list) -> Optional[Any]:
         payload = {"version": "1.1", "method": method, "params": params}

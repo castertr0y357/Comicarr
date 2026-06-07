@@ -20,11 +20,18 @@ class TransmissionDownloader(BaseDownloader):
     Docs: https://github.com/transmission/transmission/blob/main/docs/rpc-spec.md
     """
 
-    def __init__(self) -> None:
-        self._base_url = settings.TRANSMISSION_URL.rstrip("/") + _RPC_PATH
-        self._username = settings.TRANSMISSION_USERNAME or None
-        self._password = settings.TRANSMISSION_PASSWORD or None
-        self._directory = settings.TRANSMISSION_DIRECTORY or None
+    def __init__(
+        self,
+        url: Optional[str] = None,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
+        directory: Optional[str] = None,
+    ) -> None:
+        target_url = url or settings.TRANSMISSION_URL
+        self._base_url = target_url.rstrip("/") + _RPC_PATH
+        self._username = username if username is not None else settings.TRANSMISSION_USERNAME
+        self._password = password if password is not None else settings.TRANSMISSION_PASSWORD
+        self._directory = directory if directory is not None else settings.TRANSMISSION_DIRECTORY
         self._session_id: Optional[str] = None
 
     def _auth(self) -> Optional[httpx.DigestAuth]:
