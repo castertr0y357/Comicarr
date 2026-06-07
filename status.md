@@ -55,6 +55,12 @@ This file tracks the current features, environment status, and pending/completed
     - Integrated "Test Connection" buttons in [settings.html](file:///e:/Coding%20Projects/Comicarr/app/templates/settings.html) for ComicVine, Weekly Pull list proxy, downloader clients, FlareSolverr, JDownloader 2, and the External Content Server.
     - Added the missing `WEEKLY_PULL_PROXY_URL` input configuration field to the pulls UI settings tab.
     - Added 6 automated tests in [tests/test_connection_endpoints.py](file:///e:/Coding%20Projects/Comicarr/tests/test_connection_endpoints.py) covering all success and failure testing endpoints.
+  - Implemented non-blocking weekly pull list page loading:
+    - Updated `read_weekly_releases` route in `app/routers/web.py` to support `auto_sync` behavior.
+    - Set the route to dynamically detect HTMX requests (`HX-Request` header) and default `auto_sync` to `False` to prevent infinite reload loops.
+    - Added background POST request trigger (`hx-trigger="load"`) and refreshing indicator banner (`#refresh-indicator`) in `weekly.html`.
+    - Fixed positional argument bug in the `/api/weekly/sync` callback routing where the session dependency was incorrectly mapped to the `sync_failed` flag.
+    - Added unit and integration tests in `tests/test_routes.py` verifying non-blocking loader, cached-data sync triggers, and HTMX loop prevention.
 
 
 

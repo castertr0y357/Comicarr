@@ -347,31 +347,72 @@ async def test_read_weekly_releases_with_cached_data(client, db_session):
 @pytest.mark.asyncio
 @patch("app.services.weekly_pull.WeeklyPullService")
 async def test_read_weekly_releases_empty_auto_sync(mock_service_class, client, db_session):
-    mock_service = AsyncMock()
-    mock_service_class.return_value = mock_service
-    
-    async def mock_fetch(week, year):
-        from app.models.weekly import WeeklyPullList
-        record = WeeklyPullList(
-            shipdate="2026-06-10",
-            publisher="DC Comics",
-            issue="50",
-            comic="Batman",
-            status="Wanted",
-            weeknumber=24,
-            year=2026
-        )
-        db_session.add(record)
-        await db_session.commit()
-        return {"status": "success"}
-        
-    mock_service.fetch_and_sync = mock_fetch
-    mock_service.close = AsyncMock()
-
+    # Call GET weekly route when database is empty
     response = await client.get("/weekly?week=24&year=2026")
     assert response.status_code == 200
-    assert "Batman" in response.text
-    assert "Week 24 (2026)" in response.text
-    mock_service.close.assert_called_once()
+    
+    # Assert that the page does not block and instead renders the sync spinner and HTMX background load triggers
+    assert "Syncing releases for this week..." in response.text
+    assert 'hx-trigger="load"' in response.text
+    assert 'hx-post="/api/weekly/sync"' in response.text
+    
+    # Verify that the service class was not called inline during page load
+    mock_service_class.assert_not_called()
+
+
+@pytest.mark.asyncio
+@patch("app.services.weekly_pull.WeeklyPullService")
+async def test_read_weekly_releases_cached_data_auto_sync(mock_service_class, client, db_session):
+    from app.models.weekly import WeeklyPullList
+    record = WeeklyPullList(
+        shipdate="2026-06-10",
+        publisher="Marvel",
+        issue="1",
+        comic="Spider-Man",
+        status="Skipped",
+        weeknumber=24,
+        year=2026
+    )
+    db_session.add(record)
+    await db_session.commit()
+
+    # Call GET weekly route (normal browser navigation)
+    response = await client.get("/weekly?week=24&year=2026")
+    assert response.status_code == 200
+    assert "Spider-Man" in response.text
+    
+    # Assert that the auto-sync trigger exists with the #refresh-indicator
+    assert 'hx-trigger="load"' in response.text
+    assert 'hx-indicator="#refresh-indicator"' in response.text
+    mock_service_class.assert_not_called()
+
+
+@pytest.mark.asyncio
+@patch("app.services.weekly_pull.WeeklyPullService")
+async def test_read_weekly_releases_htmx_prevents_auto_sync(mock_service_class, client, db_session):
+    from app.models.weekly import WeeklyPullList
+    record = WeeklyPullList(
+        shipdate="2026-06-10",
+        publisher="Marvel",
+        issue="1",
+        comic="Spider-Man",
+        status="Skipped",
+        weeknumber=24,
+        year=2026
+    )
+    db_session.add(record)
+    await db_session.commit()
+
+    # Call GET weekly route mimicking HTMX swap request
+    headers = {"hx-request": "true"}
+    response = await client.get("/weekly?week=24&year=2026", headers=headers)
+    assert response.status_code == 200
+    assert "Spider-Man" in response.text
+    
+    # Assert that no auto-sync load triggers exist on HTMX requests
+    assert 'hx-trigger="load"' not in response.text
+    mock_service_class.assert_not_called()
+
+
 
 

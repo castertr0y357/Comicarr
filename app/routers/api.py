@@ -309,23 +309,37 @@ async def sync_weekly_releases(
     session: AsyncSession = Depends(get_session)
 ):
     service = WeeklyPullService(session)
+    sync_failed = False
+    week = form_data.week
+    year = form_data.year
+    if week is None or year is None:
+        import datetime
+        today = datetime.date.today()
+        if week is None:
+            week = int(today.strftime("%U"))
+        if year is None:
+            year = today.year
+            
     try:
-        week = form_data.week
-        year = form_data.year
-        if week is None or year is None:
-            import datetime
-            today = datetime.date.today()
-            if week is None:
-                week = int(today.strftime("%U"))
-            if year is None:
-                year = today.year
-                
         await service.fetch_and_sync(week, year)
+    except Exception as e:
+        import logging
+        logger = logging.getLogger("app")
+        logger.error(f"[Weekly Sync] - Error - Failed to sync releases: {e}")
+        sync_failed = True
     finally:
         await service.close()
         
     from app.routers.web import read_weekly_releases
-    return await read_weekly_releases(request, week, year, form_data.publisher, session)
+    return await read_weekly_releases(
+        request=request,
+        week=week,
+        year=year,
+        publisher=form_data.publisher,
+        sync_failed=sync_failed,
+        auto_sync=False,
+        session=session
+    )
 
 @router.post("/settings")
 async def update_settings(request: Request, session: AsyncSession = Depends(get_session)):

@@ -3,8 +3,23 @@
 {% block title %}Weekly Releases - Comicarr{% endblock %}
 
 {% block content %}
-<div class="section-title" style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
-    <h2>Weekly Releases</h2>
+<style>
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.htmx-request#refresh-indicator, .htmx-request #refresh-indicator {
+    display: inline-flex !important;
+}
+</style>
+<div class="section-title" style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+    <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+        <h2 style="margin: 0;">Weekly Releases</h2>
+        <span id="refresh-indicator" class="htmx-indicator" style="color: var(--accent-cyan); font-size: 0.85rem; font-weight: 500; align-items: center; gap: 0.4rem; background-color: rgba(6, 182, 212, 0.08); border: 1px solid rgba(6, 182, 212, 0.2); padding: 0.25rem 0.6rem; border-radius: 6px; vertical-align: middle;">
+            <span class="sync-spinner" style="width: 12px; height: 12px; border: 2px solid rgba(6, 182, 212, 0.1); border-top-color: var(--accent-cyan); border-radius: 50%; animation: spin 1s linear infinite; display: inline-block;"></span>
+            <span>Refreshing...</span>
+        </span>
+    </div>
     <div style="display: flex; gap: 0.5rem; align-items: center;">
         <a href="/weekly?week={{ prev_week }}&year={{ prev_year }}{% if selected_pub %}&publisher={{ selected_pub }}{% endif %}" class="btn btn-secondary btn-sm" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; text-decoration: none;">← Prev Week</a>
         <span class="badge badge-active" style="padding: 0.5rem 1rem; font-size: 0.9rem; background-color: var(--accent-cyan); color: var(--bg-main); font-weight: 600; border-radius: 8px;">Week {{ week }} ({{ year }})</span>
@@ -97,31 +112,56 @@
         </div>
     </div>
     {% else %}
-    <div style="text-align: center; padding: 5rem 1.5rem; background-color: var(--bg-surface); border: 1px dashed var(--border-color); border-radius: 12px; color: var(--text-secondary);">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 1.5rem; opacity: 0.6;">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="8" x2="12" y2="12"></line>
-            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-        </svg>
-        <p style="font-size: 1.15rem; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-primary);">No release schedule found for this week.</p>
-        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">Download the latest releases list from the League of Comic Geeks proxy server.</p>
-        <button class="btn btn-primary"
-                hx-post="/api/weekly/sync"
-                hx-vals='{"week": {{ week }}, "year": {{ year }}{% if selected_pub %}, "publisher": "{{ selected_pub }}"{% endif %}}'
-                hx-target="body"
-                hx-indicator="#sync-indicator-empty"
-                style="display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; padding: 0.6rem 1.2rem; cursor: pointer; margin: 0 auto;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="23 4 23 10 17 10"></polyline>
-                <polyline points="1 20 1 14 7 14"></polyline>
-                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+        {% if sync_failed %}
+        <div style="text-align: center; padding: 5rem 1.5rem; background-color: var(--bg-surface); border: 1px dashed var(--border-color); border-radius: 12px; color: var(--text-secondary);">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 1.5rem; opacity: 0.6;">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
             </svg>
-            <span>Refresh Pull List</span>
-        </button>
-        <div style="margin-top: 1rem;">
-            <span id="sync-indicator-empty" class="htmx-indicator" style="color: var(--accent-cyan); font-size: 0.9rem;">Syncing releases...</span>
+            <p style="font-size: 1.15rem; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-primary);">Sync failed or returned no releases.</p>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">The League of Comic Geeks proxy server could not be reached, or there are no releases this week.</p>
+            <button class="btn btn-primary"
+                    hx-post="/api/weekly/sync"
+                    hx-vals='{"week": {{ week }}, "year": {{ year }}{% if selected_pub %}, "publisher": "{{ selected_pub }}"{% endif %}}'
+                    hx-target="body"
+                    hx-indicator="#sync-indicator-empty"
+                    style="display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; padding: 0.6rem 1.2rem; cursor: pointer; margin: 0 auto;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 4 23 10 17 10"></polyline>
+                    <polyline points="1 20 1 14 7 14"></polyline>
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                </svg>
+                <span>Try Refresh Pull List Again</span>
+            </button>
+            <div style="margin-top: 1rem;">
+                <span id="sync-indicator-empty" class="htmx-indicator" style="color: var(--accent-cyan); font-size: 0.9rem;">Syncing releases...</span>
+            </div>
         </div>
-    </div>
+        {% else %}
+        <div style="text-align: center; padding: 5rem 1.5rem; background-color: var(--bg-surface); border: 1px dashed var(--border-color); border-radius: 12px; color: var(--text-secondary);"
+             hx-post="/api/weekly/sync"
+             hx-trigger="load"
+             hx-vals='{"week": {{ week }}, "year": {{ year }}{% if selected_pub %}, "publisher": "{{ selected_pub }}"{% endif %}}'
+             hx-target="body">
+            
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem;">
+                <div class="sync-spinner" style="width: 40px; height: 40px; border: 4px solid rgba(6, 182, 212, 0.1); border-top-color: var(--accent-cyan); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                <p style="font-size: 1.15rem; margin-bottom: 0.25rem; font-weight: 500; color: var(--text-primary);">Syncing releases for this week...</p>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0;">Please wait, fetching metadata in the background...</p>
+            </div>
+        </div>
+        {% endif %}
     {% endfor %}
 </div>
+
+{% if auto_sync and releases %}
+<div hx-post="/api/weekly/sync"
+     hx-trigger="load"
+     hx-vals='{"week": {{ week }}, "year": {{ year }}{% if selected_pub %}, "publisher": "{{ selected_pub }}"{% endif %}}'
+     hx-target="body"
+     hx-indicator="#refresh-indicator"
+     style="display: none;">
+</div>
+{% endif %}
 {% endblock %}

@@ -113,8 +113,15 @@ async def read_weekly_releases(
     week: Optional[int] = None,
     year: Optional[int] = None,
     publisher: Optional[str] = None,
+    sync_failed: bool = False,
+    auto_sync: Optional[bool] = None,
     session: AsyncSession = Depends(get_session)
 ):
+    if auto_sync is None:
+        # If the request header indicates it is HTMX, don't auto-sync to prevent infinite loops
+        is_htmx = request.headers.get("hx-request") == "true"
+        auto_sync = not is_htmx
+
     if week is None or year is None:
         today = datetime.date.today()
         if week is None:
@@ -143,22 +150,6 @@ async def read_weekly_releases(
     res = await session.execute(stmt)
     releases = res.scalars().all()
     
-    # If no releases are cached for this week, automatically fetch and sync them
-    if not releases:
-        from app.services.weekly_pull import WeeklyPullService
-        from app.core.logger import logger
-        service = WeeklyPullService(session)
-        try:
-            logger.info(f"[WeeklyPull] Auto-fetching releases for week {week}, year {year}...")
-            sync_res = await service.fetch_and_sync(week, year)
-            if sync_res.get("status") == "success":
-                res = await session.execute(stmt)
-                releases = res.scalars().all()
-        except Exception as e:
-            logger.error(f"[WeeklyPull] Auto-fetch failed: {e}")
-        finally:
-            await service.close()
-    
     # Extract unique publishers
     publishers = sorted(list(set(r.publisher for r in releases if r.publisher)))
     
@@ -182,6 +173,8 @@ async def read_weekly_releases(
             "prev_year": prev_year,
             "next_week": next_week,
             "next_year": next_year,
+            "sync_failed": sync_failed,
+            "auto_sync": auto_sync,
             "active_page": "weekly"
         }
     )
